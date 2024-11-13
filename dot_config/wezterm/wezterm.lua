@@ -18,8 +18,8 @@ end
 -- ---------------------------
 -- Help: https://wezfurlong.org/wezterm/config/default-keys.html
 --       https://wezfurlong.org/wezterm/config/keys.html
---       > wezterm show-keys --lua      -- show current key tables and bidings
---       > wezterm -n show-keys --lua   -- show default key tables and bidings
+--       > wezterm show-keys --lua      -- show current key tables and bindings
+--       > wezterm -n show-keys --lua   -- show default key tables and bindings
 local act = wezterm.action -- name it "act" like in "wezterm show-keys --lua"
 local key_table_extend = function(table_full, table_diff)
     for index, value in pairs(table_diff) do
