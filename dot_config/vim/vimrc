@@ -1,0 +1,16 @@
+set encoding=utf-8
+set fileencoding=utf-8
+set number
+set relativenumber
+set hlsearch
+set nowrap
+
+map h h
+map l l
+map j j
+map k k
+
+map <a-up> :resize -1<cr>
+map <a-down> :resize +1<cr>
+map <a-left> :vertical resize -1<cr>
+map <a-right> :vertical resize +1<cr>
