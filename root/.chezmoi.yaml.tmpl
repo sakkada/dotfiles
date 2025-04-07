@@ -1,0 +1,14 @@
+{{- $email := promptStringOnce . "sakkada.email" "Email address" "gmurka@gmail.com" -}}
+
+edit:
+  command: nvim
+merge:
+  command: nvim
+  args:
+  - -d
+  - "{{ "{{" }} .Destination {{ "}}" }}"
+  - "{{ "{{" }} .Source {{ "}}" }}"
+  - "{{ "{{" }} .Target {{ "}}" }}"
+data:
+  sakkada:
+    email: {{ $email | quote }}
