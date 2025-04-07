@@ -179,6 +179,7 @@ config.key_tables = {
         { key = "L", mods = "CTRL", action = act.AdjustPaneSize({ "Right", 5 }) },
         { key = "K", mods = "CTRL", action = act.AdjustPaneSize({ "Up", 5 }) },
         { key = "J", mods = "CTRL", action = act.AdjustPaneSize({ "Down", 5 }) },
+        { key = "W", mods = "CTRL", action = "PopKeyTable" },
         { key = "Escape", action = "PopKeyTable" },
     }, -- custom key-table (very similar to neovim hydra functionality)
     copy_mode = key_table_extend(wezterm.gui.default_key_tables().copy_mode, copy_mode),
@@ -340,17 +341,21 @@ config.font_size = 10
 -- }
 -- config.font_shaper = 'Allsorts'
 config.font_shaper = "Harfbuzz"
-config.font = wezterm.font(
-    "Consolas NF",
-    -- 'FiraCode Nerd Font Mono Ret',
-    -- 'FiraCode Nerd Font Mono SemBd',
-    -- 'FiraCode Nerd Font Mono Bold',
-    -- 'FiraCode Nerd Font Mono Light',
-    -- 'FiraCode Nerd Font Mono Med',
-    -- 'FiraCode Nerd Font Mono',
-    -- 'Cascadia Code',
-    { weight = "Regular" }
-)
+-- config.font = wezterm.font(
+--     "Consolas NF",
+--     -- 'FiraCode Nerd Font Mono Ret',
+--     -- 'FiraCode Nerd Font Mono SemBd',
+--     -- 'FiraCode Nerd Font Mono Bold',
+--     -- 'FiraCode Nerd Font Mono Light',
+--     -- 'FiraCode Nerd Font Mono Med',
+--     -- 'FiraCode Nerd Font Mono',
+--     -- 'Cascadia Code',
+--     { weight = "Regular" }
+-- )
+config.font = wezterm.font_with_fallback({
+    { family = 'Consolas', weight = 'Regular' },
+    'Symbol Nerd Fort Mono',
+})
 
 -- config.front_end = "OpenGL"
 -- config.front_end = "Software"
@@ -393,7 +398,11 @@ config.window_frame = {
     -- inactive_titlebar_border_bottom = '#fb2042',
     --
 
-    font = wezterm.font({ family = "Consolas NF", weight = "Regular" }),
+    -- font = wezterm.font({ family = "Consolas", weight = "Regular" }),
+    font = wezterm.font_with_fallback({
+        { family = 'Consolas', weight = 'Regular' },
+        'Symbol Nerd Fort',
+    }),
 
     -- The size of the font in the tab bar.
     -- Default to 10.0 on Windows but 12.0 on other systems
@@ -451,6 +460,8 @@ config.window_padding = {
 }
 config.anti_alias_custom_block_glyphs = true
 config.status_update_interval = 500
+
+config.allow_win32_input_mode = true  -- default true, set to false to allow <ctrl+space> and similar key sequences
 
 -- Wezterm events handling
 -- -----------------------
