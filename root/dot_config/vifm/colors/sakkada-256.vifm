@@ -1,0 +1,306 @@
+" Sakkada-256 vifm colorscheme.
+"
+" This is Vifm's sakkada-256 color scheme for terminals that support 256 colors.
+" Based on Default-256 builtin colorscheme.
+"
+" This file last updated: 11 April, 2025
+"
+" All available builtin colorschemes:
+" - https://vifm.info/colorschemes.shtml - screenshots and github links
+" - https://github.com/vifm/vifm-colors - github repository
+"
+" ToC:
+" 1. Color-groups highlightings
+" 2. File-groups highlightings
+" 3. Color-groups description
+" 4. Color-groups hierarchy
+" 5. Terminal 256 colors list
+
+
+" 1. Color-groups highlightings
+" -----------------------------
+" There are all available vifm color-groups.
+" Highlightings are defined in hierarchical order and with visual indent
+" for better reading. More about color-groups hierarchy read in chapter 4.
+
+highlight clear
+
+hi JobLine              cterm=none          ctermfg=255         ctermbg=237
+
+hi SuggestBox           cterm=none          ctermfg=255         ctermbg=237
+
+hi StatusLine           cterm=none          ctermfg=221         ctermbg=235
+hi  WildBox             cterm=none          ctermfg=255         ctermbg=236
+hi   WildMenu           cterm=reverse       ctermfg=221         ctermbg=none
+hi  User1               cterm=none          ctermfg=197         ctermbg=235
+
+hi Border               cterm=none          ctermfg=255         ctermbg=235
+
+hi CmdLine              cterm=none          ctermfg=255         ctermbg=235
+hi  ErrorMsg            cterm=none          ctermfg=none        ctermbg=196
+
+hi Win                  cterm=none          ctermfg=255         ctermbg=235
+hi  OtherWin            cterm=none          ctermfg=none        ctermbg=none
+hi   AuxWin             cterm=none          ctermfg=none        ctermbg=none
+hi    OddLine                               ctermfg=none        ctermbg=none
+hi     Directory        cterm=none          ctermfg=87          ctermbg=none
+hi     Link             cterm=none          ctermfg=none        ctermbg=125
+hi     BrokenLink       cterm=none          ctermfg=none        ctermbg=209
+hi     HardLink         cterm=none          ctermfg=none        ctermbg=130
+hi     Socket           cterm=reverse       ctermfg=182         ctermbg=none
+hi     Device           cterm=reverse       ctermfg=204         ctermbg=none
+hi     Fifo             cterm=reverse       ctermfg=50          ctermbg=none
+hi     Executable       cterm=none          ctermfg=154         ctermbg=none
+hi      CmpMismatch     cterm=none          ctermfg=none        ctermbg=124
+hi      CmpUnmatched    cterm=none          ctermfg=none        ctermbg=64
+hi      CmpBlank                            ctermfg=none        ctermbg=none
+hi       Selected       cterm=none          ctermfg=221         ctermbg=236
+hi        CurrLine      cterm=reverse       ctermfg=none        ctermbg=none
+hi         LineNr                           ctermfg=none        ctermbg=none
+hi        OtherLine     cterm=none          ctermfg=none        ctermbg=237
+
+hi TopLine              cterm=none          ctermfg=244         ctermbg=235
+hi  TopLineSel          cterm=none          ctermfg=203         ctermbg=none
+
+hi TabLine              cterm=none          ctermfg=244         ctermbg=235
+hi  TabLineSel          cterm=none          ctermfg=41          ctermbg=none
+
+" Note:
+" User1..User20 - 20 colors which can be used via %* 'statusline' macro.
+"
+" Note:
+" "none" means default terminal color for highlight groups at the first level
+" of the hierarchy and transparency for all others.
+"
+" Note:
+" StatusLine is used in suggest-box in single panel mode and
+" OtherLine is used in suggest-box text contained region in multi panel mode.
+" SuggestBox itself is used in suggest-box in region without text (under text).
+" So, we need to set both fg and bg in StatusLine and OtherLine to have
+" predictable colors in suggest-boxes in all modes (single and multi panel).
+
+
+" 2. File-groups highlightings
+" ----------------------------
+
+" build system files
+highlight {Makefile,Makefile.am,Makefile.in,Makefile.win,*.mak,*.mk,*.m4,*.ac,
+          \configure,CMakeLists.txt,*.cmake,*.pro,*.pri,*.sln,meson.build,
+          \meson_options.txt}
+        \ cterm=none ctermfg=121 ctermbg=default
+" archives
+highlight {*.7z,*.ace,*.arj,*.bz2,*.cpio,*.deb,*.dz,*.gz,*.jar,*.lzh,*.lzma,
+          \*.rar,*.rpm,*.rz,*.tar,*.taz,*.tb2,*.tbz,*.tbz2,*.tgz,*.tlz,*.trz,
+          \*.txz,*.tz,*.tz2,*.tzst,*.xz,*.z,*.zip,*.zoo,*.apk,*.gzip,*.lz,
+          \*.zstd}
+        \ cterm=none ctermfg=215 ctermbg=default
+" configuration and other readable textual formats
+highlight {*.css,*.less,*.scss,*.markdown,*.md,*.mkd,*.org,*.pandoc,*.pdc,*.tex,
+          \*.txt,*.xml,*.log,*.rss,*.xul,*.json,*.yaml,*.yml,*.csv,*.plist,
+          \*.ini,*.cfg,*.rc,*.conf,*.spec,*.qrc,*.description,*.list,*.log.old,
+          \*.log.1,*.log.2,*.log.3,*.log.4,*.log.5,*.log.6,*.log.7,*.log.8,
+          \syslog,syslog.1,*.xsd,*.toml,*.rst}
+        \ cterm=none ctermfg=217 ctermbg=default
+" still text files, but keeping this unoptimizable glob separately
+highlight {*[^0-9].[1-9]}
+        \ cterm=none ctermfg=217 ctermbg=default
+" documents and text-based formats that need special handling
+highlight {*.doc,*.docx,*.xls,*.xlsm,*.xlsx,*.mobi,*.rtf,*.ppt,*.pptx,*.pdf,
+          \*.epub,*.fb2,*.djvu,*.djv,*.htm,*.html,*.shtml,*.xhtml,*.desktop,
+          \*.odg,*.odt,*.ods}
+        \ cterm=none ctermfg=218 ctermbg=default
+" audio
+highlight {*.aac,*.ac3,*.anx,*.ape,*.asf,*.au,*.axa,*.cue,*.flac,*.m2a,*.m4a,
+          \*.mid,*.midi,*.mka,*.mp3,*.mpc,*.mpga,*.oga,*.ogg,*.ogx,*.ra,*.ram,
+          \*.spx,*.wav,*.wma}
+        \ cterm=none ctermfg=79 ctermbg=default
+" multimedia
+highlight {*.avi,*.axv,*.divx,*.flv,*.m2v,*.m4v,*.mp4,*.m4p,*.mp4v,*.mpeg,*.mpg,
+          \*.mkv,*.mov,*.nuv,*.ogv,*.qt,*.rm,*.ts,*.vob,*.webm,*.wmv,*.xvid,
+          \*.unknown_video}
+        \ cterm=none ctermfg=49 ctermbg=default
+" images
+highlight {*.bmp,*.gif,*.jpeg,*.jpg,*.ico,*.png,*.ppm,*.svg,*.svgz,*.tga,*.tif,
+          \*.tiff,*.xbm,*.xcf,*.xpm,*.xspf,*.xwd,*.ai,*.pbm,*.pgm,*.webp}
+        \ cterm=none ctermfg=117 ctermbg=default
+" executables
+highlight {*.sh,*.bash,*.zsh,*.bat,*.btm,*.cmd,*.com,*.dll,*.exe,*.run,*.msu,
+          \*.msi,*.fish,*.AppImage}
+        \ cterm=none ctermfg=77 ctermbg=default
+" source code
+highlight {*.patch,*.diff,*.py,*.pyc,*.cpp,*.hpp,*.c,*.h,*.cpp,*.hpp,*.cc,*.hh,*.ld,
+          \*.hs,*.php,*.lua,*.vim,*.vifm,*.asm,*.s,*.java,*.cxx,*.c++,*.go,
+          \*.pl,*.pm,*.t,*.cs,*.asp,*.dart,*.js,*.rb,*.scala,*.ts,*.coffee,
+          \*.ml,*.mli,*.rs,*.sql,*.qml,vifmrc,vimrc,.vimrc,*.flex,*.ypp,*.S,
+          \*.robot}
+        \ cterm=none ctermfg=193 ctermbg=default
+" software documentation
+highlight {COPYRIGHT,COPYING*,BUGS,ChangeLog*,FAQ,INSTALL*,LICENCE,LICENSE,NEWS,
+          \README,README.*,AUTHORS,TODO,THANKS}
+        \ cterm=none ctermfg=187 ctermbg=default
+
+
+" 3. Color-groups description
+" ---------------------------
+" Links:
+" - https://vifm.info/manual.shtml -> /Available group-name values<cr>
+"
+" Group names, style values and color names are case insensitive.
+" Note that this doesn't include column names as that would make builtin
+" and custom columns indistinguishable.
+"
+" Color-groups:
+" - Win             - color of all windows (views, dialogs, menus) and default color for their content (e.g. regular files in views)
+" - AuxWin          - color of auxiliary areas of windows
+" - OtherWin        - color of inactive pane
+" - Border          - color of vertical parts of the border
+" - TabLine         - tab line color (for 'tabscope' set to "global")
+" - TabLineSel      - color of the tip of selected tab (regardless of 'tabscope')
+" - TopLine         - top line color of the other pane
+" - TopLineSel      - top line color of the current pane
+" - CmdLine         - the command line/status bar color
+" - ErrorMsg        - color of error messages in the status bar
+" - StatusLine      - color of the line above the status bar
+" - JobLine         - color of job line that appears above the status line
+" - WildBox         - color of the wild menu
+" - WildMenu        - color of the selected wild menu item
+" - SuggestBox      - color of key suggestion box
+" - CurrLine        - line at cursor position in active view
+" - OtherLine       - line at cursor position in inactive view
+" - OddLine         - color of every second entry line in a pane
+" - LineNr          - line number column of views
+" - Selected        - color of selected files
+" - Directory       - color of directories
+" - Link            - color of symbolic links in the views
+" - BrokenLink      - color of broken symbolic links
+" - HardLink        - color of regular files with more than one hard link
+" - Socket          - color of sockets
+" - Device          - color of block and character devices
+" - Executable      - color of executable files
+" - Fifo            - color of fifo pipes
+" - CmpMismatch     - color of mismatched files in side-by-side comparison by path
+" - CmpUnmatched    - comparison file entry that has no pair in the other pane
+" - CmpBlank        - entry placeholder in a compare view, paired with CmpUnmatched
+" - User1..User20   - 20 colors which can be used via %* 'statusline' macro
+
+
+" 4. Color-groups hierarchy
+" -------------------------
+"
+" Links:
+" - https://vifm.info/manual.shtml (does not contain heirarchy, only names)
+" - ViFM > :help vifm-:highlight<cr> -> /Here is the hierarchy<cr>
+"
+" Hierarchy of color-groups:
+"   JobLine
+"   SuggestBox
+"   StatusLine
+"     WildBox
+"       WildMenu
+"     User1..User20
+"   Border
+"   CmdLine
+"     ErrorMsg
+"   Win
+"     OtherWin
+"       AuxWin
+"         OddLine
+"           Column highlights
+"             File name specific highlights
+"               Directory
+"               Link
+"               BrokenLink
+"               HardLink
+"               Socket
+"               Device
+"               Fifo
+"               Executable
+"                 CmpMismatch
+"                 CmpUnmatched
+"                 CmpBlank
+"                   Selected
+"                     CurrLine
+"                       LineNr (in active pane)
+"                     OtherLine
+"                       LineNr (in inactive pane)
+"   TopLine
+"     TopLineSel
+"       TabLineSel (for pane tabs)
+"         User1..User20
+"   TabLine
+"     TabLineSel
+"       User1..User20
+"
+" "none" means default terminal color for highlight groups at the first level
+" of the hierarchy and transparency for all others.
+
+
+" 5. Terminal 256 colors list
+" ---------------------------
+"
+" Links:
+" - https://en.wikipedia.org/wiki/ANSI_escape_code
+" - https://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
+" - https://www.ditig.com/256-colors-cheat-sheet
+" - ViFM > :help vifm-:highlight
+"
+" Note:
+" - Generate colors in *nix shell:
+"   https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
+"   > for c in {0..255}; do tput setaf $c; tput setaf $c | cat -v; echo =$c; done
+" - Colors table below is convinient for using with plugins like
+"   https://github.com/norcalli/nvim-colorizer.lua
+" - Xterm-like names for 256 color palette:
+"   http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
+"   ViFM > :help vifm-:highlight<cr> -> /0 Black<cr>
+"   0 Black ... 255 Grey93
+"
+" Xterm system colors       -  0 Black -  15 LightWhite
+" Xterm non-system colors   - 16 Grey0 - 255 Grey93
+"
+"   0 #000000   1 #800000   2 #008000   3 #808000
+"   8 #808080   9 #ff0000  10 #00ff00  11 #ffff00
+"   4 #000080   5 #800080   6 #008080   7 #c0c0c0
+"  12 #0000ff  13 #ff00ff  14 #00ffff  15 #ffffff
+"
+"  16 #000000  17 #00005f  18 #000087  19 #0000af  20 #0000d7  21 #0000ff
+"  22 #005f00  23 #005f5f  24 #005f87  25 #005faf  26 #005fd7  27 #005fff
+"  28 #008700  29 #00875f  30 #008787  31 #0087af  32 #0087d7  33 #0087ff
+"  34 #00af00  35 #00af5f  36 #00af87  37 #00afaf  38 #00afd7  39 #00afff
+"  40 #00d700  41 #00d75f  42 #00d787  43 #00d7af  44 #00d7d7  45 #00d7ff
+"  46 #00ff00  47 #00ff5f  48 #00ff87  49 #00ffaf  50 #00ffd7  51 #00ffff
+"  52 #5f0000  53 #5f005f  54 #5f0087  55 #5f00af  56 #5f00d7  57 #5f00ff
+"  58 #5f5f00  59 #5f5f5f  60 #5f5f87  61 #5f5faf  62 #5f5fd7  63 #5f5fff
+"  64 #5f8700  65 #5f875f  66 #5f8787  67 #5f87af  68 #5f87d7  69 #5f87ff
+"  70 #5faf00  71 #5faf5f  72 #5faf87  73 #5fafaf  74 #5fafd7  75 #5fafff
+"  76 #5fd700  77 #5fd75f  78 #5fd787  79 #5fd7af  80 #5fd7d7  81 #5fd7ff
+"  82 #5fff00  83 #5fff5f  84 #5fff87  85 #5fffaf  86 #5fffd7  87 #5fffff
+"  88 #870000  89 #87005f  90 #870087  91 #8700af  92 #8700d7  93 #8700ff
+"  94 #875f00  95 #875f5f  96 #875f87  97 #875faf  98 #875fd7  99 #875fff
+" 100 #878700 101 #87875f 102 #878787 103 #8787af 104 #8787d7 105 #8787ff
+" 106 #87af00 107 #87af5f 108 #87af87 109 #87afaf 110 #87afd7 111 #87afff
+" 112 #87d700 113 #87d75f 114 #87d787 115 #87d7af 116 #87d7d7 117 #87d7ff
+" 118 #87ff00 119 #87ff5f 120 #87ff87 121 #87ffaf 122 #87ffd7 123 #87ffff
+" 124 #af0000 125 #af005f 126 #af0087 127 #af00af 128 #af00d7 129 #af00ff
+" 130 #af5f00 131 #af5f5f 132 #af5f87 133 #af5faf 134 #af5fd7 135 #af5fff
+" 136 #af8700 137 #af875f 138 #af8787 139 #af87af 140 #af87d7 141 #af87ff
+" 142 #afaf00 143 #afaf5f 144 #afaf87 145 #afafaf 146 #afafd7 147 #afafff
+" 148 #afd700 149 #afd75f 150 #afd787 151 #afd7af 152 #afd7d7 153 #afd7ff
+" 154 #afff00 155 #afff5f 156 #afff87 157 #afffaf 158 #afffd7 159 #afffff
+" 160 #d70000 161 #d7005f 162 #d70087 163 #d700af 164 #d700d7 165 #d700ff
+" 166 #d75f00 167 #d75f5f 168 #d75f87 169 #d75faf 170 #d75fd7 171 #d75fff
+" 172 #d78700 173 #d7875f 174 #d78787 175 #d787af 176 #d787d7 177 #d787ff
+" 178 #d7af00 179 #d7af5f 180 #d7af87 181 #d7afaf 182 #d7afd7 183 #d7afff
+" 184 #d7d700 185 #d7d75f 186 #d7d787 187 #d7d7af 188 #d7d7d7 189 #d7d7ff
+" 190 #d7ff00 191 #d7ff5f 192 #d7ff87 193 #d7ffaf 194 #d7ffd7 195 #d7ffff
+" 196 #ff0000 197 #ff005f 198 #ff0087 199 #ff00af 200 #ff00d7 201 #ff00ff
+" 202 #ff5f00 203 #ff5f5f 204 #ff5f87 205 #ff5faf 206 #ff5fd7 207 #ff5fff
+" 208 #ff8700 209 #ff875f 210 #ff8787 211 #ff87af 212 #ff87d7 213 #ff87ff
+" 214 #ffaf00 215 #ffaf5f 216 #ffaf87 217 #ffafaf 218 #ffafd7 219 #ffafff
+" 220 #ffd700 221 #ffd75f 222 #ffd787 223 #ffd7af 224 #ffd7d7 225 #ffd7ff
+" 226 #ffff00 227 #ffff5f 228 #ffff87 229 #ffffaf 230 #ffffd7 231 #ffffff
+"
+" 232 #080808 236 #303030 240 #585858 244 #808080 248 #a8a8a8 252 #d0d0d0
+" 233 #121212 237 #3a3a3a 241 #606060 245 #8a8a8a 249 #b2b2b2 253 #dadada
+" 234 #1c1c1c 238 #444444 242 #666666 246 #949494 250 #bcbcbc 254 #e4e4e4
+" 235 #262626 239 #4e4e4e 243 #767676 247 #9e9e9e 251 #c6c6c6 255 #eeeeee
