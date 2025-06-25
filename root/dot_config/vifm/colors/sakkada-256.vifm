@@ -92,7 +92,7 @@ highlight {Makefile,Makefile.am,Makefile.in,Makefile.win,*.mak,*.mk,*.m4,*.ac,
 highlight {*.7z,*.ace,*.arj,*.bz2,*.cpio,*.deb,*.dz,*.gz,*.jar,*.lzh,*.lzma,
           \*.rar,*.rpm,*.rz,*.tar,*.taz,*.tb2,*.tbz,*.tbz2,*.tgz,*.tlz,*.trz,
           \*.txz,*.tz,*.tz2,*.tzst,*.xz,*.z,*.zip,*.zoo,*.apk,*.gzip,*.lz,
-          \*.zstd}
+          \*.zstd,*.iso,*.oxt}
         \ cterm=none ctermfg=215 ctermbg=default
 " configuration and other readable textual formats
 highlight {*.css,*.less,*.scss,*.markdown,*.md,*.mkd,*.org,*.pandoc,*.pdc,*.tex,
@@ -107,7 +107,7 @@ highlight {*[^0-9].[1-9]}
 " documents and text-based formats that need special handling
 highlight {*.doc,*.docx,*.xls,*.xlsm,*.xlsx,*.mobi,*.rtf,*.ppt,*.pptx,*.pdf,
           \*.epub,*.fb2,*.djvu,*.djv,*.htm,*.html,*.shtml,*.xhtml,*.desktop,
-          \*.odg,*.odt,*.ods}
+          \*.odg,*.odt,*.ods,*.odp}
         \ cterm=none ctermfg=218 ctermbg=default
 " audio
 highlight {*.aac,*.ac3,*.anx,*.ape,*.asf,*.au,*.axa,*.cue,*.flac,*.m2a,*.m4a,
@@ -121,7 +121,8 @@ highlight {*.avi,*.axv,*.divx,*.flv,*.m2v,*.m4v,*.mp4,*.m4p,*.mp4v,*.mpeg,*.mpg,
         \ cterm=none ctermfg=49 ctermbg=default
 " images
 highlight {*.bmp,*.gif,*.jpeg,*.jpg,*.ico,*.png,*.ppm,*.svg,*.svgz,*.tga,*.tif,
-          \*.tiff,*.xbm,*.xcf,*.xpm,*.xspf,*.xwd,*.ai,*.pbm,*.pgm,*.webp}
+          \*.tiff,*.xbm,*.xcf,*.xpm,*.xspf,*.xwd,*.ai,*.pbm,*.pgm,*.webp,*.cr2,
+          \*.heic,*.jfif,*.psd,*.kra}
         \ cterm=none ctermfg=117 ctermbg=default
 " executables
 highlight {*.sh,*.bash,*.zsh,*.bat,*.btm,*.cmd,*.com,*.dll,*.exe,*.run,*.msu,
