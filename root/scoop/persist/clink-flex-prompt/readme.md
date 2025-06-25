@@ -1,33 +1,27 @@
 ## Flex prompt setup
 
-### Configure prompt symbol with current date
+### Configure prompt with wizard
 
-Unfotunatelly there is no any setting to configure prompt symbol to be dinamically changed,
-that is why patch way is described here.
-
-To have such prompt:
+First step is configure flex-prompt with wizard:
 
 ```bash
-C:\Users\sakkada\scoop ·························································· 21:13:46
-211346 ❯
+$ flexprompt configure -> y12y11211111n -> y to save
 ```
 
-it is required to make some little change in `get_prompt_symbol` function
-in `flexprompt.lua` file in installation directory (e.g. `~/scoop/apps/clink-flex-prompt/0.16`).
+**Note**: flexprompt wizard steps values for 0.18 version.
 
-```diff
- local function get_prompt_symbol()
-     local p = nil
-     if rl.insertmode and not rl.insertmode() then
-         p = get_symbol("overtype_prompt", "►")
-     end
--    return p or get_symbol("prompt", ">")
-+    -- return p or get_symbol("prompt", ">")
-+    -- sakkada patch: add curdate before '>' symbol
-+    return os.date('%H%M%S ') .. (p or get_symbol("prompt", ">"))
- end
-```
+This will generate `flexprompt_autoconfig.lua` file.
 
-**Note**: not used if `lines=one` and `top_promt` defined.
+### Configure prompt config file
 
-TODO: To be deleted, not used anymore.
+After generating autoconfig file it is recommended to not edit
+generated file, instead create `flexprompt_config.lua` to customize
+setting to avoid loss configuration after next wizard run.
+
+**Note**: config file contains 2 approaches to have 2-lines setup,
+read more in related comments. Now selected 2nd one (top+left prompt,
+no right, one line).
+
+**Note**: env:var `VIRTUAL_ENV_PROMPT` is used instead of python's
+virtual env native plugin which allow to customize color and text
+of prefix.
