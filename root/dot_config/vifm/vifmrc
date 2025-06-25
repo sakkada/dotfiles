@@ -1,6 +1,10 @@
 " vim: filetype=vifm :
+" sakkada: based on original vifmrc from vifm 0.14.3
+"          Code until `Sakkada custom configuration secion` is taken from
+"          original vifmrc and is kept as similar to original as possible
+"          except `File types association`
 "
-" Sample configuration file for vifm (last updated: 18 December, 2024)
+" Sample configuration file for vifm (last updated: 11 May, 2025)
 "
 " You can edit this file by hand.  The " character at the beginning of a line
 " comments out the line.  Blank lines are ignored.  The basic format for each
@@ -24,8 +28,6 @@
 " almost universally useful, but most lines are provided simply as usage
 " examples and can be removed without hesitation.  Make configuration specific
 " to your needs using this file as a starting point.
-" Sakkada notes:
-" - scoop/apps/../data/vifmrc and scoop/persist/../data/vifmrc are hard-linked
 
 " ------------------------------------------------------------------------------
 " Main settings
@@ -34,7 +36,6 @@
 " Command used to edit files in various contexts.  The default is vim.
 " If you would like to use another vi clone such as Elvis or Vile
 " you will need to change this setting.
-" sakkada: default is vim -> nvim -> ect, now is nvim -> vim -> ect.
 if executable('nvim')
     set vicmd=nvim
 elseif executable('vim')
@@ -70,13 +71,13 @@ set vifminfo=dhistory,savedirs,chistory,state,tui,tabs,shistory,ehistory,
 " This is size of all of the many kinds of histories, in particular it's the
 " number of last visited directories (not necessarily distinct ones) stored in
 " the directory history.
-set history=500 " sakkada: default is 100
+set history=500
 
 " Automatically resolve symbolic links on l or Enter.
 set nofollowlinks
 
 " Natural sort of (version) numbers within text.
-set nosortnumbers " sakkada: default is sortnumbers
+set nosortnumbers
 
 " Maximum number of changes that can be undone.
 set undolevels=100
@@ -92,7 +93,7 @@ set norunexec
 " Format for displaying time in file list. For example:
 " TIME_STAMP_FORMAT=%m/%d-%H:%M
 " See man date or man strftime for details.
-set timefmt='%Y-%m-%d %H:%M' " sakkada: default is '%Y/%m/%d %H:%M'
+set timefmt='%Y-%m-%d %H:%M'
 
 " Show list of matches on tab completion in command-line mode
 set wildmenu
@@ -125,8 +126,7 @@ endif
 
 " Set custom status line look
 " sakkada: see default in original vifmrc
-" sakkada: rnd
-" https://q2a.vifm.info/312/is-it-possible-to-use-escape-sequences-in-statusline
+" sakkada:rnd: https://q2a.vifm.info/312/is-it-possible-to-use-escape-sequences-in-statusline
 let &statusline  = "  %l:%S%[%1*+%x%]%0*:%[ (HID: %D)%] %f %[(SYM: %T)%] %=  %10{&sort}  /FA:%8a /%8c  %N"
 let &statusline .= "  Hint: %z %= %A %[(%u:%g)%]  %d  /SS:%8s /%8E  "
 
@@ -139,7 +139,7 @@ endif
 set grepprg="grep -n -H -I -r -s %i %a %s"
 
 " List of color schemes to try (picks the first one supported by the terminal)
-colorscheme sakkada-256 Default-256 Default " sakkada: default is Default-256 Default
+colorscheme sakkada-256 Default-256 Default
 
 " ------------------------------------------------------------------------------
 " Bookmarks
@@ -170,33 +170,55 @@ mark h ~/
 "  %u uses command's output to build a file list
 "  see `:help vifm-macros` and `:help vifm-filename-modifiers` for more
 
-" sakkada: defaults are:
-" diff  --> command! diff vim -d %f %F
-" zip   --> command! zip zip -r %c.zip %f
-" vgrep --> command! vgrep vim "+grep %a"
 command! df df -h %m 2> /dev/null
 command! diff nvim -d %"f %"F
 command! zip zip -r %"d:t.dir.zip %"f
-command! run !! ./%f
+command! run !%"f
+command! rund !%"f &
+command! runp !!%"f
+command! runpd !!%"f &
 command! make !!make %a
 command! mkcd :mkdir %a | cd %a
 command! vgrep nvim "+grep %a"
 command! reload :write | restart full
 
 " ------------------------------------------------------------------------------
-" File types association
+" File handlers and previewers
 " ------------------------------------------------------------------------------
-" sakkada: rnd
+" TODO: make different file type association file for win and *nix
+" sakkada:rnd:
 " https://q2a.vifm.info/26/how-to-open-file-with-different-program-than-the-one-defined
 
-" :filetype pattern1,pattern2 defaultprogram,program2
-" :fileviewer pattern1,pattern2 consoleviewer
+" Setting up handlers that are considered in all environments:
+"   filetype {pattern1,pattern2} program1,{Optional description}program2
 "
-" The first entry is the default program to be used with a matching file.
-" The other programs for the file type can be accessed via :file command.
-" The command macros like %f, %F, %d, %D may be used in the commands.
-" The %a macro is ignored.  To use a % you must put %%.
-" Spaces in an app name must be escaped, for example: QuickTime\ Player.app
+" Setting up handlers that are considered only in a graphical environment:
+"   filextype {pattern} graphical-program %c
+"
+" Setting up previewers:
+"   fileviewer {pattern1,pattern2} console-viewer1,console-viewer2
+"
+" ORDER MATTERS!  Both handlers and previewers are considered in the order of
+" their definition, therefore they should be defined from most to least
+" specific.  In particular, catch-all patterns like `*`, `*/`, `.*`, `*.*`
+" should be defined after all others.
+"
+" All entries matching a particular file are considered in order until an
+" existing command is found.  Other entries are accessible via :file command
+" for handlers or via `a` and `A` keys for previewers in view mode.
+"
+" The ordering can be checked at run-time by running
+" :filetype/:filextype/:fileviewer with a file name as the only argument.
+" This displays a menu of defined entries annotated with availability of
+" commands.
+"
+" More on syntax and usage:
+"  - macros like %c, %f, %d, etc. may be used in the commands
+"  - the %a macro is ignored
+"  - to insert a literal % use %%
+"  - spaces in an app name must be escaped, for example:
+"    + QuickTime\ Player.app
+"    + "c:/Program Files (x86)/app/app.exe"
 
 " For automated FUSE mounts, you must register an extension with :file[x]type
 " in one of the following formats:
@@ -220,248 +242,422 @@ command! reload :write | restart full
 " You can also add %CLEAR if you want to clear screen before running FUSE
 " program.  There is also %FOREGROUND, which is useful for entering passwords.
 
-" Pdf
-" sakkada: default viewer is (%c instead of %"c):
-" fileviewer {*.pdf},<application/pdf> pdftotext -nopgbrk %c -
-filextype {*.pdf},<application/pdf> zathura %c %i, apvlv %c, xpdf %c
-fileviewer {*.pdf},<application/pdf> pdftotext -nopgbrk %"c -
+" High-priority
+filetype    {*.xhtml,*.html,*.htm},<text/html>,
+            \{*.svg},<image/svg+xml>,
+            \{*.csv},
+            \ {^ Neovim }
+            \ nvim %"f:p,
+filextype   {*.bmp,*.jpg,*.jpeg,*.jfif,*.png,*.gif,*.xmp,*.tif,*.tiff,*.cr2,
+            \*.heic,*.ico,*.psd,*.svg,*.webp},
+            \<image/*>
+            \ {^ QuickLook }
+            \ bridge %"c:p,
 
-" PostScript
-filextype {*.ps,*.eps,*.ps.gz},<application/postscript>
-        \ {View in zathura}
-        \ zathura %f,
-        \ {View in gv}
-        \ gv %c %i,
+" Pdf
+filextype   {*.pdf},<application/pdf>
+            \ {  SumatraPDF }
+            \ sumatrapdf %"f &,
+            \ {  Okular }
+            \ okular %"f,
+            \ {  pdftotext > nvim }
+            \ pdftotext -nopgbrk -enc UTF-8 -eol unix -layout %"c - | nvim
+fileviewer  {*.pdf},<application/pdf>
+            \ pdftotext -nopgbrk -enc UTF-8 -eol unix -layout %"c -,
 
 " Djvu
-filextype {*.djvu},<image/vnd.djvu>
-        \ {View in zathura}
-        \ zathura %f,
-        \ {View in apvlv}
-        \ apvlv %f,
+filextype   {*.djvu},<image/vnd.d>
+            \ {  SumatraPDF }
+            \ sumatrapdf %"f &,
+            \ {  Okular }
+            \ okular %"f,
 
 " Midi
-filetype {*.mid,*.kar}
-       \ {Play using TiMidity++}
-       \ timidity %f,
+filetype    {*.mid,*.kar}
+            \ {  Play using TiMidity++ }
+            \ timidity %f,
 
 " Audio
-filetype {*.wav,*.mp3,*.flac,*.m4a,*.wma,*.ape,*.ac3,*.og[agx],*.spx,*.opus,
-         \*.aac,*.mpga},
-        \<audio/*>
-       \ {Play using MPlayer}
-       \ mplayer %f,
-       \ {Play using mpv}
-       \ mpv --no-video %f %s,
-       \ {Play using ffplay}
-       \ ffplay -nodisp -hide_banner -autoexit %c,
-fileviewer {*.wav,*.mp3,*.flac,*.m4a,*.wma,*.ape,*.ac3,*.og[agx],*.spx,*.opus,
-           \*.aac,*.mpga},
-          \<audio/*>
-         \ ffprobe -hide_banner -pretty %c 2>&1
+filetype    {*.wav,*.mp3,*.flac,*.m4a,*.wma,*.ape,*.ac3,*.og[agx],*.spx,*.opus,*.aac,*.mpga},
+            \<audio/*>
+            \ {  mpv }
+            \ mpv --no-video %"f %s,
+            \ {  ffplay }
+            \ ffplay -nodisp -hide_banner -autoexit %"c,
+            \ {  VLC }
+            \ vlc %"f,
+fileviewer  {*.wav,*.mp3,*.flac,*.m4a,*.wma,*.ape,*.ac3,*.og[agx],*.spx,*.opus,*.aac,*.mpga},
+            \<audio/*>
+            \ ffprobe -hide_banner -pretty %"c 2>&1,
 
 " Video
-" sakkada: updated in local rc, diffput into global rc
-filextype {*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
-          \*.fl[icv],*.m2v,*.mov,*.webm,*.ts,*.mts,*.m4v,*.r[am],*.qt,*.divx,
-          \*.as[fx],*.unknown_video},
-         \<video/*>
-        \ {View using ffplay}
-        \ ffplay -fs -hide_banner -autoexit %"f,
-        \ {View using Dragon}
-        \ dragon %"f:p,
-        \ {View using mplayer}
-        \ mplayer %"f,
-        \ {Play using mpv}
-        \ mpv --no-video %"d/%"f,
-        \ {Play using vlc}
-        \ vlc %"d/%"f,
-fileviewer {*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
-           \*.fl[icv],*.m2v,*.mov,*.webm,*.ts,*.mts,*.m4v,*.r[am],*.qt,*.divx,
-           \*.as[fx],*.unknown_video},
-          \<video/*>
-         \ ffprobe -hide_banner -pretty %"d/%"c 2>&1
+filextype   {*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
+            \*.fl[icv],*.m2v,*.mov,*.webm,*.mts,*.m4v,*.r[am],*.qt,*.divx,
+            \*.as[fx],*.unknown_video},
+            \<video/*>
+            \ {  ffplay }
+            \ ffplay -fs -hide_banner -autoexit %"c,
+            \ {  mpv }
+            \ mpv %"f,
+            \ {  VLC }
+            \ vlc %"f,
+fileviewer  {*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
+            \*.fl[icv],*.m2v,*.mov,*.webm,*.mts,*.m4v,*.r[am],*.qt,*.divx,
+            \*.as[fx],*.unknown_video},
+            \<video/*>
+            \ ffprobe -hide_banner -pretty %"c 2>&1,
 
 " Web
-filextype {*.xhtml,*.html,*.htm},<text/html>
-        \ {Open with qutebrowser}
-        \ qutebrowser %f %i,
-        \ {Open with firefox}
-        \ firefox %f &,
-filetype {*.xhtml,*.html,*.htm},<text/html> links, lynx
-
-" Object
-filetype {*.o},<application/x-object> nm %f | less
+filetype    {*.xhtml,*.html,*.htm},<text/html>
+            \ {  lynx }
+            \ lynx -vikeys %"c
+filextype   {*.xhtml,*.html,*.htm},<text/html>
+            \ {  Firefox }
+            \ firefox %"f,
+            \ {  Vieb }
+            \ vieb %"f,
+            \ {  pandoc > less }
+            \ pandoc --list-output-formats | fzf | xargs -I @ pandoc %"c -t @ | less -S -r,
+            \ {  pandoc > nvim }
+            \ nu -c "pandoc --list-output-formats | fzf | pandoc "%"c" -t $in | nvim",
+            \ {  Tidy > nvim }
+            \ tidy -i -q -w 0 %"c 2>NUL | nvim,
+fileviewer  {*.xhtml,*.html,*.htm},<text/html>
+            \ pandoc %"c -t ansi | sed -r -e "1,,$s/\x1b]8;;[^\x1b]*\x1b\\\\//g",
+            \ tidy -i -q -w 0 %"c 2>NUL | bat --color=always --wrap=never --pager=never --line-range=:9999 --style=numbers,
 
 " Man page
-filetype {*.[1-8]},<text/troff> man ./%c
-fileviewer {*.[1-8]},<text/troff> man ./%c | col -b
+filetype    {*.[1-8]},<text/troff>
+            \ {  man }
+            \ wsl man ./%"c,
+            \ {  man > nvim }
+            \ wsl man ./%"c | nvim
+fileviewer  {*.[1-8]},<text/troff>
+            \ wsl man ./%"c | wsl col -b
 
 " Images
-filextype {*.svg,*.svgz},<image/svg+xml>
-        \ {Edit in Inkscape}
-        \ inkscape %f,
-        \ {View in Inkview}
-        \ inkview %f,
-filextype {*.cr2}
-        \ {Open in Darktable}
-        \ darktable %f,
-        \ {Open in RawTherapee}
-        \ rawtherapee %f,
-filextype {*.xcf}
-        \ {Open in GIMP}
-        \ gimp %f,
-filextype {*.kra}
-        \ {Open in Krita}
-        \ krita %f,
-filextype {*.blend}
-        \ {Open in Blender}
-        \ blender %c,
-filextype {*.sh3d}
-        \ {Open in Sweet Home 3D}
-        \ sweethome3d %c:p,
-" sakkada: updated in local rc, commented in global rc
-filextype {*.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm,*.tif,*.tiff},<image/*>
-        \ {View in QuickLook}
-        \ quicklook %"d/%"c,
-        \ {View in oculante}
-        \ oculante %"d/%"c,
-        \ {View in qimgv}
-        \ qimgv %"d/%"c,
-        \ {View in sxiv}
-        \ sxiv %f,
-        \ {View in gpicview}
-        \ gpicview %c,
-        \ {View in shotwell}
-        \ shotwell,
-fileviewer {*.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm,*.tif,*.tiff},<image/*>
-         \ identify %"f
-         " TODO:
-         " \ wezterm imgcat %"f --width 20 --height 20
-         " \ magick %"c sixel:-
-
-" sakkada: added
-filextype {*.psd,},<image/vnd.adobe.photoshop>
-        \ {View in QuickLook}
-        \ quicklook %"d/%"c,
-        \ {View in oculante}
-        \ oculante %"d/%"c,
+filextype   {*.blend}
+            \ {e Blender }
+            \ blender %c,
+filextype   {*.sh3d}
+            \ {e Sweet Home 3D }
+            \ sweethome3d %c:p,
+filextype   {*.xcf}
+            \ {^ QuickLook }
+            \ bridge %"c:p,
+            \ {  qView }
+            \ qview %"c,
+            \ {  PicView }
+            \ picview %"c,
+            \ {e GIMP }
+            \ gimp %"f:p &,
+filextype   {*.kra}
+            \ {  Nomacs }
+            \ nomacs %"c,
+            \ {  Oculante }
+            \ oculante %"c:p,
+            \ {e Krita }
+            \ krita %f,
+" Images viewers group
+filextype   {*.bmp,*.jpg,*.jpeg,*.jfif,*.png,*.gif,*.xmp,*.tif,*.tiff,
+            \*.cr2,*.heic,*.ico,*.psd,*.svg,*.webp},
+            \<image/*>
+            \ {  Nomacs }
+            \ nomacs %"c,
+            \ {  qimgv }
+            \ qimgv %"c &,
+            \ {  PicView }
+            \ picview %"c,
+            \ {  QuickViewer }
+            \ quickviewer %"c:p,
+            \ {  ImageGlass }
+            \ imageglass %"c:p,
+            \ {  qView }
+            \ qview %"c,
+            \ {  Oculante }
+            \ oculante %"c:p,
+            \ {  The EXR Viewer }
+            \ tev %"c,
+            \ {  Wezterm imgcat }
+            \ !!wezterm imgcat %"c,
+filextype   {*.cr2}
+            \ {  Darktable }
+            \ darktable %"f,
+            \ {  RawTherapee }
+            \ rawtherapee %"f,
+filextype   {*.svg,*.svgz},<image/svg+xml>
+            \ {  Inkview }
+            \ inkview %"f &,
+            \ {e Inkscape }
+            \ inkscape %"f &,
+" Images editors group
+filextype   {*.bmp,*.jpg,*.jpeg,*.jfif,*.png,*.gif,*.xmp,*.tif,*.tiff,*.webp},
+            \<image/*>
+            \ {e Paint.NET }
+            \ paintdotnet %"c:p,
+filextype   {*.bmp,*.jpg,*.jpeg,*.jfif,*.png,*.gif,*.xmp,*.tif,*.tiff,
+            \*.cr2,*.heic,*.ico,*.psd,*.svg,*.webp},
+            \<image/*>
+            \ {e GIMP }
+            \ gimp %"f:p &,
+" Images quick viewers
+fileviewer  {*.bmp,*.jpg,*.jpeg,*.jfif,*.png,*.tif,*.tiff,*.webp}
+            " https://github.com/TheZoraiz/ascii-image-converter
+            \ ascii-image-converter %"c --width %pw --color --color-bg -b --threshold=255,
+            \ ascii-image-converter %"c --width %pw --color --complex,
+            \ ascii-image-converter %"c --width %pw --color --complex -b --dither --threshold=255,
+            " \ wezterm imgcat %"f --width %pw --height %ph
+            " \ magick %"c sixel:-
+            " \ pwsh -C ConvertTo-Sixel %"c -Width %pw -Protocol InlineImageProtocol %pd
+fileviewer  {*.bmp,*.jpg,*.jpeg,*.jfif,*.png,*.gif,*.xmp,*.tif,*.tiff,
+            \*.cr2,*.heic,*.ico,*.psd,*.svg,*.webp,*.kra,*.xcf},
+            \<image/*>
+            \ identify %"f,
 
 " OpenRaster
-filextype *.ora
-        \ {Edit in MyPaint}
-        \ mypaint %f,
+filextype   *.ora
+            \ {  MyPaint }
+            \ mypaint %"f,
 
 " Mindmap
-filextype *.vym
-        \ {Open with VYM}
-        \ vym %f &,
+filextype   *.vym
+            \ {  VYM }
+            \ vym %"f &,
 
 " MD5
-filetype *.md5
-       \ {Check MD5 hash sum}
-       \ md5sum -c %f %S,
+filetype    *.md5
+            \ {  Check MD5 hash sum }
+            \ md5sum -c %"f %S,
 
 " SHA1
-filetype *.sha1
-       \ {Check SHA1 hash sum}
-       \ sha1sum -c %f %S,
+filetype    *.sha1
+            \ {  Check SHA1 hash sum }
+            \ sha1sum -c %"f %S,
 
 " SHA256
-filetype *.sha256
-       \ {Check SHA256 hash sum}
-       \ sha256sum -c %f %S,
+filetype    *.sha256
+            \ {  Check SHA256 hash sum }
+            \ sha256sum -c %"f %S,
 
 " SHA512
-filetype *.sha512
-       \ {Check SHA512 hash sum}
-       \ sha512sum -c %f %S,
+filetype    *.sha512
+            \ {  Check SHA512 hash sum }
+            \ sha512sum -c %"f %S,
 
 " GPG signature
-filetype {*.asc},<application/pgp-signature>
-       \ {Check signature}
-       \ !!gpg --verify %c,
+filetype    {*.asc},<application/pgp-signature>
+            \ {  Check signature }
+            \ !!gpg --verify %"c,
 
 " Torrent
-filetype {*.torrent},<application/x-bittorrent> ktorrent %f &
-fileviewer {*.torrent},<application/x-bittorrent>
-         \ dumptorrent -v %c,
-         \ transmission-show %c
+filetype    {*.torrent},<application/x-bittorrent>
+            \ {  qBittorrent }
+            \ qbittorrent %"f &,
+            \ {  torrenttools > nvim }
+            \ torrenttools info %"c | nvim,
+fileviewer  {*.torrent},<application/x-bittorrent>
+            \ torrenttools info %"c,
 
+" Mounts
 " FuseZipMount
-filetype {*.zip,*.jar,*.war,*.ear,*.oxt,*.apkg},
-        \<application/zip,application/java-archive>
-       \ {Mount with fuse-zip}
-       \ FUSE_MOUNT|fuse-zip %SOURCE_FILE %DESTINATION_DIR,
-       \ {View contents}
-       \ unzip -l %f | less,
-       \ {Extract here}
-       \ unzip %c,
-fileviewer *.zip,*.jar,*.war,*.ear,*.oxt unzip -l %f
+filetype    {*.zip,*.jar,*.war,*.ear,*.oxt,*.apkg},
+            \<application/zip,application/java-archive>
+            \ {  Mount with fuse-zip }
+            \ FUSE_MOUNT|fuse-zip %SOURCE_FILE %DESTINATION_DIR,
 
 " ArchiveMount
-filetype {*.cpio,*.cpio.gz,*.rpm,*.tar,*.tar.bz2,*.tbz2,*.tgz,*.tar.gz,*.tar.xz,
-         \*.txz,*.tar.zst,*.tzst},
-        \<application/x-cpio,application/x-rpm,application/x-tar>
-       \ {Mount with archivemount}
-       \ FUSE_MOUNT|archivemount %SOURCE_FILE %DESTINATION_DIR,
-fileviewer *.tgz,*.tar.gz tar -tzf %c
-fileviewer *.tar.bz2,*.tbz2 tar -tjf %c
-fileviewer *.tar.xz,*.txz tar -tJf %c
-fileviewer *.tar.zst,*.tzst tar -t --zstd -f %c
-fileviewer {*.tar},<application/x-tar> tar -tf %c
-fileviewer {*.cpio},<application/x-cpio> cpio -t < %c
-fileviewer {*.rpm},<application/x-rpm> rpm -q --list %c%q 2> /dev/null
+filetype    {*.cpio,*.cpio.gz,*.rpm,*.tar,*.tar.bz2,*.tbz2,*.tgz,*.tar.gz,*.tar.xz,
+            \*.txz,*.tar.zst,*.tzst},
+            \<application/x-cpio,application/x-rpm,application/x-tar>
+            \ {  Mount with archivemount }
+            \ FUSE_MOUNT|archivemount %SOURCE_FILE %DESTINATION_DIR,
 
-" Rar2FsMount and rar archives
-filetype {*.rar},<application/x-rar>
-       \ {Mount with rar2fs}
-       \ FUSE_MOUNT|rar2fs %SOURCE_FILE %DESTINATION_DIR,
-fileviewer {*.rar},<application/x-rar> unrar v %c
+" Rar2FsMount
+filetype    {*.rar},<application/x-rar>
+            \ {  Mount with rar2fs }
+            \ FUSE_MOUNT|rar2fs %SOURCE_FILE %DESTINATION_DIR,
+
+" Fuse7z
+filetype    {*.7z},<application/x-7z-compressed>
+            \ {  Mount with fuse-7z }
+            \ FUSE_MOUNT|fuse-7z %SOURCE_FILE %DESTINATION_DIR,
 
 " IsoMount
-filetype {*.iso},<application/x-iso9660-image>
-       \ {Mount with fuseiso}
-       \ FUSE_MOUNT|fuseiso %SOURCE_FILE %DESTINATION_DIR,
+filetype    {*.iso},<application/x-iso9660-image>
+            \ {  Mount with fuseiso }
+            \ FUSE_MOUNT|fuseiso %SOURCE_FILE %DESTINATION_DIR,
 
 " SshMount
-filetype *.ssh
-       \ {Mount with sshfs}
-       \ FUSE_MOUNT2|sshfs %PARAM %DESTINATION_DIR %FOREGROUND,
+filetype    *.ssh
+            \ {  Mount with sshfs }
+            \ FUSE_MOUNT2|sshfs %PARAM %DESTINATION_DIR %FOREGROUND,
 
 " FtpMount
-filetype *.ftp
-       \ {Mount with curlftpfs}
-       \ FUSE_MOUNT2|curlftpfs -o ftp_port=-,,disable_eprt %PARAM %DESTINATION_DIR %FOREGROUND,
+filetype    *.ftp
+            \ {  Mount with curlftpfs }
+            \ FUSE_MOUNT2|curlftpfs -o ftp_port=-,,disable_eprt %PARAM %DESTINATION_DIR %FOREGROUND,
 
-" Fuse7z and 7z archives
-filetype {*.7z},<application/x-7z-compressed>
-       \ {Mount with fuse-7z}
-       \ FUSE_MOUNT|fuse-7z %SOURCE_FILE %DESTINATION_DIR,
-fileviewer {*.7z},<application/x-7z-compressed> 7z l %c
+" Archive handlers
+filetype    {*.zip,*.jar,*.war,*.ear,*.oxt,*.apkg},<application/zip,application/java-archive>,
+            \{*.tar},<application/x-tar>,
+            \{*.rar},<application/x-rar>,
+            \{*.7z},<application/x-7z-compressed>,
+            \{*.iso},<application/x-iso9660-image>
+            \ {  7z list > less }         7z l %"c | less -S -r,
+            \ {  7z list > nvim }         7z l %"c | nvim,
+            \ {  7z extract here }      !!7z -bb3 x %"c,
+            \ {  7z extract to subdir } !!7z -bb3 x %"c -o"%c:r:gs? ?_?--extracted",
+filetype    {*.tgz,*.tar.gz},
+            \{*.tar.bz2,*.tbz2},
+            \{*.tar.xz,*.txz}
+            \ {  7z list > less }         7z x -so %"c | 7z l -ttar -si | less -S -r,
+            \ {  7z list > nvim }         7z x -so %"c | 7z l -ttar -si | nvim,
+            \ {  7z extract here }      !!7z x -so %"c | 7z x -ttar -si -y -bb3,
+            \ {  7z extract to subdir } !!7z x -so %"c | 7z x -ttar -si -y -bb3 -o"%c:r:gs? ?_?--extracted",
+            \ {  7z extract tar }       !!7z x -bb3 %"c,
+" Archive viewers 7z-related
+fileviewer  {*.zip,*.jar,*.war,*.ear,*.oxt},<application/zip,application/java-archive>,
+            \{*.tar},<application/x-tar>,
+            \{*.rar},<application/x-rar>,
+            \{*.7z},<application/x-7z-compressed>,
+            \{*.iso},<application/x-iso9660-image>
+            \ 7z l %"c | sed -nr -e "/Scanning|Listing/,,$ p",
+            \ 7z l %"c | sed -nr -e "/^\s+Date\s+Time/,,$ p",
+fileviewer  {*.tgz,*.tar.gz},
+            \{*.tar.bz2,*.tbz2},
+            \{*.tar.xz,*.txz}
+            \ 7z x -so %"c | 7z l -ttar -si | sed -nr -e "/Scanning|Listing/,,$ p",
+            \ 7z x -so %"c | 7z l -ttar -si | sed -nr -e "/^\s+Date\s+Time/,,$ p",
+            \ 7z l %"c | sed -nr -e "/Scanning|Listing/,,$ p",
+" Archives viewers built-in
+fileviewer  {*.zip,*.jar,*.war,*.ear,*.oxt} unzip -l %"f,
+fileviewer  {*.tgz,*.tar.gz} tar -tzf %"c
+fileviewer  {*.tar.bz2,*.tbz2} tar -tjf %"c
+fileviewer  {*.tar.xz,*.txz} tar -tJf %"c
+fileviewer  {*.tar.zst,*.tzst} tar -t --zstd -f %"c
+fileviewer  {*.tar},<application/x-tar> tar -tf %"c
+fileviewer  {*.cpio},<application/x-cpio> cpio -t < %"c
+fileviewer  {*.rpm},<application/x-rpm> rpm -q --list %"c%q 2> /dev/null
+fileviewer  {*.rar},<application/x-rar> unrar v %"c
 
 " Office files
-filextype {*.odt,*.doc,*.docx,*.xls,*.xlsx,*.odp,*.pptx,*.ppt},
-         \<application/vnd.openxmlformats-officedocument.*,
-          \application/msword,
-          \application/vnd.ms-excel>
-        \ libreoffice %f &
-fileviewer {*.doc},<application/msword> catdoc %c
-fileviewer {*.docx},
-          \<application/
-           \vnd.openxmlformats-officedocument.wordprocessingml.document>
-         \ docx2txt.pl %f -
+filextype   {*.docx},<application/vnd.openxmlformats-officedocument.wordprocessingml.document>
+            \ {  pandoc > less }
+            \ pandoc --list-output-formats | fzf | xargs -I @ pandoc %"c -t @ | less -S -r,
+            \ {  pandoc > nvim }
+            \ nu -c "pandoc --list-output-formats | fzf | pandoc "%"c" -t $in | nvim",
+filextype   {*.odt,*.doc,*.docx,*.ods,*.xls,*.xlsx,*.odp,*.ppt,*.pptx},
+            \<application/vnd.openxmlformats-officedocument.*>
+            \ {e LibreOffice }
+            \ libreoffice %"f &,
+filextype   {*.odt,*.doc,*.docx},
+            \<application/vnd.openxmlformats-officedocument.wordprocessingml.document>
+            \ {e Ashampoo TextMaker }
+            \ textmaker %"f &,
+filextype   {*.ods,*.xls,*.xlsx},
+            \<application/vnd.openxmlformats-officedocument.spreadsheetml.sheet>
+            \ {e Ashampoo PlanMaker }
+            \ planmaker %"f &,
+filextype   {*.odp,*.ppt,*.pptx},
+            \<application/vnd.openxmlformats-officedocument.presentationml.presentation>
+            \ {e Ashampoo Presentations }
+            \ presentations %"f &,
+fileviewer  {*.doc},<application/msword>
+            \ catdoc %"c,
+fileviewer  {*.docx},<application/vnd.openxmlformats-officedocument.wordprocessingml.document>
+            \ pandoc %"c -t ansi | sed -r -e "1,,$s/\x1b]8;;[^\x1b]*\x1b\\\\//g",
+            \ pandoc %"c -t plain,
+            \ pandoc %"c -t rst,
+            \ pandoc %"c -t org,
 
 " TuDu files
-filetype *.tudu tudu -f %c
+filetype    *.tudu tudu -f %"c
 
 " Qt projects
-filextype *.pro qtcreator %f &
+filextype   *.pro qtcreator %"f &
+
+" EML
+filetype    {*.eml}
+            \ {  Thunderbird }
+            \ thunderbird %"c
+
+" CSV, TSV
+filetype    {*.csv,*.tsv}
+            \ {  pandoc org > nvim }
+            \ pandoc %"c -t org | nvim,
+            \ {  pandoc rst > nvim }
+            \ pandoc %"c -t rst | nvim,
+            \ {  pandoc *** > nvim }
+            \ nu -c "pandoc --list-output-formats | fzf | pandoc "%"c" -t $in | nvim",
+            \ {  nu to yaml > nvim }
+            \ nu -c "open "%"c" | to yaml | nvim",
+            \ {  Nushell }
+            \ nu -e "$env.config.show_banner = false; echo 'open "%"c"' | history import; open "%"c"",
+fileviewer  {*.csv,*.tsv}
+            \ pandoc %"c -t rst,
+            \ pandoc %"c -t org,
+            \ pandoc %"c -t plain,
+
+" EXE, DLL
+filextype   {*.exe,*.dll}
+            \ {  Resouce Hacker }
+            \ resourcehacker %"c,
 
 " Directories
-filextype */
-        \ {View in thunar}
-        \ Thunar %f &,
+filetype    {*/,.*/}
+            \ {  tree eza > nvim }
+            \ eza -lA --tree --icons --git --time-style="+%%Y-%%m-%%d %%H:%%M:%%S" --header --group-directories-first --level=10 %"c --total-size | nvim,
+            \ {  pathlist > nvim }
+            \ nu -c "cd "%"c"; ls --full-paths --long **/* | print $in.name --raw" | nvim,
+            \ {  Nushell }
+            \ nu -e "cd ""%"c""; echo 'ls --full-paths --long **/*' | history import; ls --full-paths --long **/*",
+            \ {  FarManager }
+            \ far %"c,
+fileviewer  {*/,.*/}
+            \ eza -lA --tree --icons --git --time-style="+%%Y-%%m-%%d %%H:%%M:%%S" --color=always --header --group-directories-first --level=10 -I __pycache__ --total-size %"c --only-dirs && printf " ",
+            \ eza -lA --tree --icons --git --time-style="+%%Y-%%m-%%d %%H:%%M:%%S" --color=always --header --group-directories-first --level=10 -I __pycache__ --total-size %"c && printf " ",
+
+" Low-priority
+fileviewer  {
+            " Docs
+            \*.pdf,*.djvu,*.odt,*.doc,*.docx,*.ods,*.xls,*.xlsx,*.odp,*.ppt,*.pptx,
+            " Audio
+            \*.wav,*.mp3,*.flac,*.m4a,*.wma,*.ape,*.ac3,*.og[agx],*.spx,*.opus,*.aac,*.mpga,
+            " Video
+            \*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
+            \*.fl[icv],*.m2v,*.mov,*.webm,*.mts,*.m4v,*.r[am],*.qt,*.divx,
+            \*.as[fx],*.unknown_video,
+            " Images
+            \*.bmp,*.jpg,*.jpeg,*.jfif,*.png,*.gif,*.xmp,*.tif,*.tiff,
+            \*.cr2,*.heic,*.ico,*.psd,*.webp,*.kra,*.xcf,
+            " Archives
+            \*.zip,*.jar,*.war,*.ear,*.oxt,*.apkg,
+            \*.rar,*.7z,*.cpio,*.rpm,*.iso,
+            \*.tar,*.tgz,*.tar.gz,*.tbz2,*.tar.bz2,*.txz,*.tar.xz,*.tzst,*.tar.zst,
+            " Binary files
+            \*.exe,*.dll,*.msi,
+            " Misc
+            \*.torrent,
+            \}
+            \ exiftool %"c,
+            \ trid %"c && printf " ",
+" All files
+fileviewer  //[^/]$//
+            \ bat %"c --color=always --wrap=never --pager=never --line-range=:9999 --style="numbers,,changes",
+            \ bat %"c --color=always --wrap=never --pager=never --line-range=:299  --style="numbers,,changes" --show-all,
+            \ trid %"c && printf " ",
+            \ exiftool %"c,
+            \ hexyl -l5000 --color=always --border=none %"c,
+
+" All types
+filetype    {*,.*}
+            \ {* Neovim }
+            \ nvim %"f:p,
+filextype   {*,.*}
+            \ {* QuickLook }
+            \ bridge %"c:p,
+            \ {* Explorer }
+            \ explorer %"f:p &,
 
 " Syntax highlighting in preview
 "
@@ -491,19 +687,6 @@ filextype */
 " filetype * open
 " For Windows:
 " filetype * explorer %"f &
-
-" sakkada: bat Viewer
-fileviewer * bat --color always --wrap never --pager never %"c -p
-
-" sakkada: edit in nvim and open by QuickLook or Explorer
-filetype *
-        \ {Open with nvim}
-        \ nvim %"d/%"c,
-filextype *
-        \ {View in QuickLook}
-        \ quicklook %"d/%"c,
-        \ {Run by Explorer}
-        \ explorer %"f &,
 
 " ------------------------------------------------------------------------------
 " Sample keyboard mappings
@@ -587,11 +770,9 @@ endif
 
 " Toggle wrap setting on ,w key
 nnoremap ,w :set wrap!<cr>
-" sakkada: added
 qnoremap ,w <c-w><c-w>:set wrap!<cr><c-w><c-w>
 
 " Example of standard two-panel file managers mappings
-" sakkada: default is nnoremap <f3> :!less %f<cr>
 nnoremap <f3> :!less -S %"f<cr>
 nnoremap <f4> :edit<cr>
 nnoremap <f5> :copy<cr>
@@ -678,6 +859,9 @@ command! Zoxide      :execute 'cd'   fnameescape(term('zoxide query --interactiv
 "
 " Note: Non builtins mappings - w,s
 "       Originally not builtin on the left side of keyboard - w,s,x,b
+" Examples:
+" - Conditionals in mappings:
+"   nnoremap <wait> l :<c-u>if &lsview==1 || filetype('.')=='dir'|exe 'norm l'|else|file|endif<cr>
 
 " <space>-group
 " The issue is single <space> still works as default, because if remap
@@ -713,12 +897,18 @@ nnoremap <wait> <space>oo :hideui<cr>
 nnoremap <wait> <space>hh :history<cr>
 nnoremap <wait> <space>hc :chistory<cr>
 nnoremap <wait> <space>hm :messages<cr>
+nnoremap <wait> <space>lv :fileviewer <c-x>c<cr>
 nnoremap <wait> <space>ll :file<cr>
-"
+nnoremap <wait> <space>li :edit<cr>
+nnoremap <wait> <space><cr> :run<cr>
+
 " preview unification: e/E open view in same/another pane; e/E close view
 nnoremap E :view<cr>
 vnoremap E :view<cr>gv
 qnoremap e q
+
+nnoremap <silent> aa <c-w><c-w>a<c-w><c-w>
+nnoremap <silent> aA <c-w><c-w>A<c-w><c-w>
 
 " w-group, also window management
 nunmap w
@@ -734,6 +924,7 @@ nnoremap <wait> wex <c-w>x
 " s-group
 nunmap s
 nnoremap ss :shell<cr>
+nnoremap sn :!nu<cr>
 nnoremap svt :tree!<cr>
 nnoremap svm :set millerview!<cr>
 nnoremap svl :set lsview!<cr>
@@ -758,6 +949,7 @@ nnoremap sgb :bmgo <c-i>
 
 nnoremap sdd :diff<cr>
 nnoremap sdc :compare<cr>
+nnoremap sdC :!!diff -q %"d:p %"D:p<cr>
 
 nnoremap srr :restart full<cr>
 
@@ -765,10 +957,11 @@ nnoremap srr :restart full<cr>
 nnoremap <wait> ,R :restart full<cr>
 nnoremap <wait> ,n :set number!<cr>
 nnoremap <wait> ,r :set relativenumber!<cr>
+nnoremap <wait> ,, ,
 
 " TODO: https://q2a.vifm.info/955/how-to-enable-livegrep?show=957
 " TODO: https://github.com/thimc/vifm_devicons/blob/master/favicons.vifm
-nnoremap <s-f3> :!quicklook %"d/%"c<cr>
+nnoremap <s-f3> :!bridge %"d/%"c<cr>
 
 " Options
 set viewcolumns=-60%{name}...,10{size}.,5{nitems}.,{#\ },-16{mtime}..  " similar to svs keymapping
@@ -778,6 +971,9 @@ set rulerformat="%S+%x  %P  %2l/%L  "  " {visible}+{filtered}  {percent}  {numbe
 set dotfiles  " show hidden files
 
 set milleroptions=lsize:1,csize:2,rsize:3,rpreview:all  " miller mode options
+
+" TODO: write custom menu in $VIFM dir to run programs, vifm functions, lua
+"       functions, fileviewers (%q), submenus (%m)
 
 " TODO: use rg (ripgrep) and fd in grepprg and findprg commands
 " set grepprg=rg\ --color=never\ -Hn\ %i\ %a\ %s
