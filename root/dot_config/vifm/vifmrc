@@ -868,10 +868,8 @@ command! Zoxide      :execute 'cd'   fnameescape(term('zoxide query --interactiv
 " single <space> to something, help messages will not appear anymore, and
 " unmapping for builtin mappings also does not work (see above).
 " Workaround is <space><esc> mapping, if you have pressed <space> and want to
-" cancel it, just press <esc> and it will enter "zx" keys (fold/unfold
-" directory, which is the most non-destructive builtin action that was found,
-" it saves highlighting and selection).
-nnoremap <wait> <space><esc> zx
+" cancel it, just press <esc> and vifm will just do nothing (<nop>).
+nnoremap <wait> <space><esc> <nop>
 nnoremap <wait> <space><space> <c-w>w
 qnoremap <wait> <space><space> <c-w>w
 
