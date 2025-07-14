@@ -1,0 +1,118 @@
+[user]
+    name = Murat Guchetl
+    email = gmurka@gmail.com
+
+[color]
+    status = auto
+    branch = auto
+    interactive = auto
+    diff = auto
+    ui = auto
+
+[color "decorate"]
+    HEAD = bold cyan
+    branch = green
+    grafted = bold white
+    remoteBranch = bold red
+    stash = bold magenta
+    tag = yellow
+
+[core]
+    pager = less --tabs=4 --quit-if-one-screen --no-init --RAW-CONTROL-CHARS --chop-long-lines --shift .125 --ignore-case
+    autocrlf = false
+    editor = vim
+
+[alias]
+    # git log
+    # see https://stackoverflow.com/questions/1057564/pretty-git-branch-graphs
+    # and https://stackoverflow.com/questions/5889878/color-in-git-log
+    # and https://stackoverflow.com/questions/46229359/how-to-do-alignment-in-git-logs-with-graph
+    log-table = log --graph --decorate --date=format:'%y-%m-%d %H:%I:%S'\
+                    --format=format:'%C(yellow)%>|(26)%h  %C(cyan)%ad  %C(green)%<(16,trunc)%an %C(auto)%d %C(bold black)%>|(1)%s%C(reset)'
+    log-graph = log --graph --decorate --date=format:'%Y-%m-%d %H:%I:%S'\
+                    --pretty=format:' %C(bold yellow)%h%Creset  %C(cyan)%ad %C(green)(%ar)  %C(red)%an %C(cyan)%ae%Creset%n%C(auto)%(decorate:suffix="%x29%n") %C(yellow)%s%Creset%n'
+    log-nice  = log --graph --decorate --oneline --date-order
+
+    l    = log-table --date-order --all
+    lb   = log-table --date-order
+
+    ll   = log-graph --date-order --all
+    llb  = log-graph --date-order
+    lls  = ll --stat
+    llp  = ll --patch
+    llr  = ll --raw
+    lll  = ll --stat --patch --raw
+
+    # tag --list
+    tl  = tag --list --sort=-version:refname --color=auto --format='%(if)%(HEAD)%(then)-%(end)%(color:brightgreen)%(align:10,left)%(refname:lstrip=2)%(end)%(color:reset) %(color:green)%(align:10,left)%(objecttype)%(end)%(color:reset) %(if)%(taggerdate)%(then)%(color:yellow dim)TD:%(color:reset yellow)%(align:27,left)%(taggerdate:iso)%(end)%(else)%(color:yellow dim)CD:%(color:reset yellow)%(align:27,left)%(committerdate:iso)%(end)%(end)%(color:reset) %(color:white dim)%(contents:subject)%(color:reset)'
+    tls = tag --list --sort=-version:refname --color=auto --format='%(color:brightgreen)%(align:10,left)%(refname:lstrip=2)%(end)%(color:reset) %(color:green)%(align:10,left)%(objecttype)%(end)%(color:reset) %(if)%(taggerdate)%(then)%(color:yellow dim)TD:%(color:reset yellow)%(align:27,left)%(taggerdate:iso)%(end)%(else)%(color:yellow dim)CD:%(color:reset yellow)%(align:27,left)%(committerdate:iso)%(end)%(end)%(color:reset) %(color:white dim)%(contents:subject)%(color:reset)%(if)%(contents:body)%(then)\n%(align:52,left)%(end) %(color:cyan)%(contents:body)%(color:reset)%(end)'
+
+    bl   = blame --color-lines --color-by-age
+    bldl = -c core.pager=delta bl
+
+    st = status
+    co = checkout
+
+    ddl   = -c core.pager=delta diff
+    ddlss = -c delta.side-by-side=true ddl
+
+    showroot = rev-parse --show-toplevel
+    showorigin = remote get-url origin
+
+[delta]
+    # docs: https://dandavison.github.io/delta/
+    hyperlinks = true
+    pager = less --tabs=4 --quit-if-one-screen --no-init --RAW-CONTROL-CHARS --chop-long-lines --shift .125 --ignore-case
+    features = gruvbox-delta
+
+[delta "gruvbox-delta"]
+    # source:   https://github.com/dandavison/delta/blob/main/themes.gitconfig
+    # based on: gruvmax-fang by https://github.com/maxfangx from themes.gitconfig
+
+    # General appearance
+    dark = true
+    syntax-theme = gruvbox-dark
+    # File
+    file-style = "#ff9b00" bold
+    file-added-label = [+]
+    file-copied-label = [=]
+    file-modified-label = [*]
+    file-removed-label = [-]
+    file-renamed-label = [>]
+    file-decoration-style = "#434C5E" ul
+    file-decoration-style = "#84786A" ul
+    # No hunk headers
+    hunk-header-style = line-number syntax bold
+    hunk-header-decoration-style = omit
+    # Line numbers
+    line-numbers = true
+    line-numbers-left-style = "#84786A"
+    line-numbers-right-style = "#84786A"
+    line-numbers-minus-style = "#A02A11"
+    line-numbers-plus-style = "#479B36"
+    line-numbers-zero-style = "#84786A"
+    line-numbers-left-format = " {nm:>3} │"
+    line-numbers-right-format = " {np:>3} │"
+    # Diff contents
+    inline-hint-style = syntax
+    minus-style = syntax "#551122"
+    minus-emph-style = syntax "#aa1133"
+    minus-non-emph-style = syntax "#551122"
+    plus-style = syntax "#334400"
+    plus-emph-style = syntax "#557711"
+    plus-non-emph-style = syntax "#334400"
+    whitespace-error-style = "#FB4934" reverse
+    side-by-side = false
+    # Commit hash
+    commit-decoration-style = normal box
+    commit-style = "#ffffff" bold
+    # Blame
+    blame-code-style = syntax
+    blame-palette = "#000000" "#1d2021" "#282828" "#3c3836"
+    # Merge conflicts
+    merge-conflict-begin-symbol = ⌃
+    merge-conflict-end-symbol = ⌄
+    merge-conflict-ours-diff-header-style = "#FABD2F" bold
+    merge-conflict-theirs-diff-header-style = "#FABD2F" bold overline
+    merge-conflict-ours-diff-header-decoration-style = ''
+    merge-conflict-theirs-diff-header-decoration-style = ''
