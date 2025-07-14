@@ -1,0 +1,23 @@
+#command
+# search forward for various patterns
+;hhh    forw-search (?<=  )([0-9a-f]{7})(?=  )\n
+;hhH    forw-search (?<= )([0-9a-f]{7})(?= )\n
+;hhex   forw-search ([0-9a-f]{4,})\n
+;hdif   forw-search \^diff(?= --git)\n
+;hdia   forw-search \^(diff(?= --git)|@@(?= ))\n
+;hcom   forw-search \^commit(?= )\n
+
+# settings
+# https://man7.org/linux/man-pages/man1/lesskey.1.html
+;sw toggle-option -chop-long-lines\n
+;si toggle-option -ignore-case\n
+
+# help
+HO  help g/(?<=    )OPTIONS\n
+HC  help g/(?<=    )MISCELLANEOUS COMMANDS\n
+
+# scroll
+# ctrl+left -> first column
+\e[1;5D no-scroll
+# ctrl+right -> last column
+\e[1;5C end-scroll
