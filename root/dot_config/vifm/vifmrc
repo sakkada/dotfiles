@@ -502,12 +502,13 @@ filetype    {*.zip,*.jar,*.war,*.ear,*.oxt,*.apkg},<application/zip,application/
             \{*.tar},<application/x-tar>,
             \{*.rar},<application/x-rar>,
             \{*.7z},<application/x-7z-compressed>,
-            \{*.iso},<application/x-iso9660-image>
+            \{*.iso},<application/x-iso9660-image>,
+            \/([^r]|[^a]r|[^t]ar|[^\.]tar)\.(gz|bz2|xz)$/
             \ {  7z list > less }         7z l %"c | less -S -r,
             \ {  7z list > nvim }         7z l %"c | nvim,
             \ {  7z extract here }      !!7z -bb3 x %"c,
             \ {  7z extract to subdir } !!7z -bb3 x %"c -o"%c:r:gs? ?_?--extracted",
-filetype    {*.tgz,*.tar.gz},
+filetype    {*.tar.gz,*.tgz},
             \{*.tar.bz2,*.tbz2},
             \{*.tar.xz,*.txz}
             \ {  7z list > less }         7z x -so %"c | 7z l -ttar -si | less -S -r,
@@ -520,10 +521,11 @@ fileviewer  {*.zip,*.jar,*.war,*.ear,*.oxt},<application/zip,application/java-ar
             \{*.tar},<application/x-tar>,
             \{*.rar},<application/x-rar>,
             \{*.7z},<application/x-7z-compressed>,
-            \{*.iso},<application/x-iso9660-image>
+            \{*.iso},<application/x-iso9660-image>,
+            \/([^r]|[^a]r|[^t]ar|[^\.]tar)\.(gz|bz2|xz)$/
             \ 7z l %"c | sed -nr -e "/Scanning|Listing/,,$ p",
             \ 7z l %"c | sed -nr -e "/^\s+Date\s+Time/,,$ p",
-fileviewer  {*.tgz,*.tar.gz},
+fileviewer  {*.tar.gz,*.tgz},
             \{*.tar.bz2,*.tbz2},
             \{*.tar.xz,*.txz}
             \ 7z x -so %"c | 7z l -ttar -si | sed -nr -e "/Scanning|Listing/,,$ p",
@@ -531,7 +533,7 @@ fileviewer  {*.tgz,*.tar.gz},
             \ 7z l %"c | sed -nr -e "/Scanning|Listing/,,$ p",
 " Archives viewers built-in
 fileviewer  {*.zip,*.jar,*.war,*.ear,*.oxt} unzip -l %"f,
-fileviewer  {*.tgz,*.tar.gz} tar -tzf %"c
+fileviewer  {*.tar.gz,*.tgz} tar -tzf %"c
 fileviewer  {*.tar.bz2,*.tbz2} tar -tjf %"c
 fileviewer  {*.tar.xz,*.txz} tar -tJf %"c
 fileviewer  {*.tar.zst,*.tzst} tar -t --zstd -f %"c
