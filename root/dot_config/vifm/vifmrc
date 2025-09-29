@@ -503,7 +503,9 @@ filetype    {*.zip,*.jar,*.war,*.ear,*.oxt,*.apkg},<application/zip,application/
             \{*.rar},<application/x-rar>,
             \{*.7z},<application/x-7z-compressed>,
             \{*.iso},<application/x-iso9660-image>,
-            \/([^r]|[^a]r|[^t]ar|[^\.]tar)\.(gz|bz2|xz)$/
+            \{*.gz}!{*.tar.gz},
+            \{*.bz2}!{*.tar.bz2},
+            \{*.xz}!{*.tar.xz},
             \ {  7z list > less }         7z l %"c | less -S -r,
             \ {  7z list > nvim }         7z l %"c | nvim,
             \ {  7z extract here }      !!7z -bb3 x %"c,
@@ -522,7 +524,9 @@ fileviewer  {*.zip,*.jar,*.war,*.ear,*.oxt},<application/zip,application/java-ar
             \{*.rar},<application/x-rar>,
             \{*.7z},<application/x-7z-compressed>,
             \{*.iso},<application/x-iso9660-image>,
-            \/([^r]|[^a]r|[^t]ar|[^\.]tar)\.(gz|bz2|xz)$/
+            \{*.gz}!{*.tar.gz},
+            \{*.bz2}!{*.tar.bz2},
+            \{*.xz}!{*.tar.xz},
             \ 7z l %"c | sed -nr -e "/Scanning|Listing/,,$ p",
             \ 7z l %"c | sed -nr -e "/^\s+Date\s+Time/,,$ p",
 fileviewer  {*.tar.gz,*.tgz},
