@@ -151,6 +151,31 @@ config.keys = {
     { key = '%', mods = 'ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
     { key = '%', mods = 'SHIFT|ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
     { key = '5', mods = 'SHIFT|ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = 'Space', mods = 'CTRL', action = wezterm.action_callback(
+        function(window, pane)
+            -- Improved keyboard handling in Conpty (Windows Pseudo Console)
+            -- https://github.com/microsoft/terminal/blob/main/doc/specs/%234999%20-%20Improved%20keyboard%20handling%20in%20Conpty.md
+
+            -- Note: to get SCO sequence, set debug_key_events to true, run wezterm from cli,
+            -- press desired sequence (e.g. ctrl-space) and watch log messages, extract from
+            -- > win32: Encoded input as "{sequence-item-here}", replace "\u{1b}" with "\27".
+            local c_space_sco ="\27[17;29;0;1;8;1_\27[32;57;32;1;8;1_\27[32;57;32;0;8;1_\27[17;29;0;0;0;1_"
+
+            -- User variable is set in Neovim, like smart-split.nvim plugin do.
+            -- https://wezterm.org/config/lua/pane/get_user_vars.html
+            local is_nvim = pane:get_user_vars().IS_NVIM == "true"
+
+            local is_windows = string.find(wezterm.target_triple, 'windows') ~= nil
+            local action = nil
+
+            if is_nvim or not is_windows then
+              action = wezterm.action.SendKey({ key = 'Space', mods = 'CTRL' })
+            else
+              action = wezterm.action.SendString( c_space_sco )
+            end
+            window:perform_action(action, pane)
+        end
+    )},
 }
 
 config.key_tables = {
