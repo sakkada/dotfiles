@@ -4,18 +4,16 @@
 # shortcut for alias
 alias al alias
 
-# print a dictionary, sorted by keys, %1 is dict, %2 is name prefix
-alias pd for k in sorted(%1.keys()): print(f"%2{k.ljust(max(len(s) for s in %1.keys())+1)} = {%1[k]}")
-# print via pd object internal __dict__
+# pd: print a dictionary, sorted by keys, %1 is dict, %2 is name prefix
+# po, ps, pl, pg: print internal __dict__, self, locals and globals respectively
+alias pd !for s, k, m in sorted(zip( map(str,%1.keys()), %1.keys(), [max(map(len,map(str,%1.keys())))]*len(%1) )): print(f"%2{s.ljust(m)} = {%1[k]}")
 alias po pd %1.__dict__ %1:
-# print via po self value
 alias ps po self
-# print via pd locals() variables
 alias pl pd locals() local:
 alias pg pd globals() global:
 
-# rich lib aliases
-alias rp  import rich; rich.print(%*)
+# rich lib aliases, required rich
+alias rp  !import rich; rich.print(%*)
 alias rps rp self
 alias rpl rp locals()
 alias rpg rp globals()
@@ -25,5 +23,9 @@ alias nn n;;l
 alias ss s;;l
 
 # asyncio support in pdb/ipdb, required nest-asyncio
-alias apatch import nest_asyncio; nest_asyncio.apply()
-alias aw     asyncio.run(%*)
+# ap: (Asyncio Patch) - patch asyncio with nest_asyncio to allow run coroutines
+# aw: (AWait)         - run coroutine (%*) and print result
+# av: (Await Value)   - run coroutine (%* except %1) and save result in %1 var
+alias ap !import nest_asyncio, asyncio; nest_asyncio.apply(); print('Ok, run "aw f()" or "av var f()"')
+alias aw !asyncio.run(%*)
+alias av !%1 = eval('asyncio.run(' + ' '.join('''%*'''.split()[1:]) + ')')
