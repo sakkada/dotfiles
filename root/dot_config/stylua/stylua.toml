@@ -1,0 +1,16 @@
+syntax = "All"                          # All (default), Lua51, Lua52, Lua53, Lua54, LuaJIT, Luau, CfxLua
+column_width = 160                      # 120
+line_endings = "Unix"                   # Unix (LF) (default), Windows (CRLF)
+indent_type = "Spaces"                  # Tabs (default), Spaces
+indent_width = 4                        # 4
+quote_style = "AutoPreferSingle"        # AutoPreferDouble (default), AutoPreferSingle, ForceDouble, ForceSingle
+call_parentheses = "Always"             # Always (default), NoSingleString, NoSingleTable, None, Input
+collapse_simple_statement = "Never"     # Never (default), FunctionOnly, ConditionalOnly, Always
+space_after_function_names = "Never"    # Never (default), Definitions, Calls, Always
+block_newline_gaps = "Never"            # Never (default), Preserve
+
+[sort_requires]
+enabled = false                         # default
+
+# Default values and options descriptions
+# https://github.com/JohnnyMorganz/StyLua?tab=readme-ov-file#options
