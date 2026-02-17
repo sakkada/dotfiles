@@ -33,11 +33,11 @@ set PATH=%PATH_PREFIX%;%PATH%;%PATH_POSTFIX%
 echo -----------------------------------
 echo Execute doskey aliases configuration:
 
-:: lesss => less -S -R -i, lesso => less -S -R -i -F
+:: lesss => less -S -R -i -m, lesso => less -S -R -i -m -F
 @echo on
 doskey j=just $*
-doskey lesss=less --chop-long-lines --RAW-CONTROL-CHARS --ignore-case $*
-doskey lesso=less --chop-long-lines --RAW-CONTROL-CHARS --ignore-case --quit-if-one-screen $*
+doskey lesss=less --chop-long-lines --RAW-CONTROL-CHARS --ignore-case --long-prompt $*
+doskey lesso=less --chop-long-lines --RAW-CONTROL-CHARS --ignore-case --long-prompt --quit-if-one-screen $*
 doskey lz=eza $*
 doskey ll=eza --long --almost-all --git --icons --time-style="+%%Y-%%m-%%d %%H:%%M:%%S" --header --group-directories-first --level=10 --color=always $* ^| less -S -r -F
 doskey llt=eza --long --almost-all --git --icons --time-style="+%%Y-%%m-%%d %%H:%%M:%%S" --header --group-directories-first --level=10 --color=always --tree $* ^| less -S -r
