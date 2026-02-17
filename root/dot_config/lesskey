@@ -11,6 +11,8 @@
 # https://man7.org/linux/man-pages/man1/lesskey.1.html
 ;sw toggle-option -chop-long-lines\n
 ;si toggle-option -ignore-case\n
+;sm toggle-option -long-prompt\n
+;sM toggle-option -LONG-PROMPT\n
 
 # help
 HO  help g/(?<=    )OPTIONS\n
