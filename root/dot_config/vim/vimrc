@@ -5,6 +5,9 @@ set relativenumber
 set hlsearch
 set nowrap
 
+set background=dark
+colorscheme retrobox
+
 map h h
 map l l
 map j j
