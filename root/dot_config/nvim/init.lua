@@ -57,6 +57,7 @@ vim.o.laststatus = 2 -- Always show statusline
 vim.o.incsearch = true -- Incremental search
 vim.o.ignorecase = true -- Ignore case in search patterns
 vim.o.smartcase = true -- Smartcase: all lower - ignore, any upper - not ignore
+vim.g.star_hash_allow_ignorecase = false -- Allow ignorecase in star_hash keybinding handler
 
 -- Non-printable characters and newline mode
 vim.o.list = true -- Enable list mode: show non-printable characters
@@ -215,29 +216,46 @@ vim.keymap.set('o', 'i%', ':norm vi%<cr>', { desc = 'Whole file' })
 -- First press - highlight only, second press - search as usual
 local function star_hash(is_star, is_g)
   -- arguments default values
-  is_g = is_g or false
-  search_key = (is_star == nil or is_star) and '*' or '#'
+  is_star = is_star == nil and true or is_star -- default true
+  is_g = is_g or false -- default false
+
+  allow_ignorecase = vim.g.star_hash_allow_ignorecase
+  allow_ignorecase = allow_ignorecase == nil and true or allow_ignorecase -- default true
+
+  local search_key = is_star and '*' or '#'
+  local suppress_ignorecase = not allow_ignorecase
 
   -- get current word under cursor and search register content
   local search_reg = vim.fn.getreg('/')
   local current = vim.fn.expand('<cword>')
-  local is_keyword = vim.fn.match(current, [[\v^\k+$]]) ~= -1
 
   -- handle g prefix
-  if not is_g and is_keyword then
-    current = '\\<' .. current .. '\\>' -- see :help star, \<\> only if iskeyword
-  elseif is_g then
+  if is_g then
     search_key = 'g' .. search_key
+  elseif vim.fn.match(current, [[\v^\k+$]]) ~= -1 then -- see :help iskeyword, :help /\k
+    current = '\\<' .. current .. '\\>' -- see :help star, \<\> only if iskeyword
+  end
+  if suppress_ignorecase then
+    current = '\\C' .. current -- force match case in regex
   end
 
-  if vim.v.count > 0 then
-    vim.cmd.normal({ vim.v.count .. search_key, bang = true }) -- default if count is defined
-  elseif vim.v.hlsearch == 1 and current == search_reg then
-    vim.cmd.normal({ search_key, bang = true })
+  if vim.v.count > 0 or (vim.v.hlsearch == 1 and current == search_reg) then
+    -- perform next search, manually (if suppress_ignorecase) or natively
+    if suppress_ignorecase then
+      vim.fn.setreg('/', current)
+      vim.fn.histadd('/', current)
+      vim.v.searchforward = is_star and 1 or 0
+      vim.cmd.normal({ vim.v.count1 .. 'n', bang = true })
+    else
+      vim.cmd.normal({ vim.v.count1 .. search_key, bang = true })
+    end
   elseif current == search_reg then
+    -- just re-highlight the same search word (first press)
     vim.api.nvim_set_option('hlsearch', true)
   else
+    -- highlight only search word (first press)
     vim.fn.setreg('/', current)
+    vim.fn.histadd('/', current)
     vim.api.nvim_set_option('hlsearch', true)
   end
 end
@@ -460,9 +478,9 @@ LAZY_PLUGINS = {
   {
     'ellisonleao/gruvbox.nvim',
     opts = {
-      undercurl = false,
-      underline = false,
-      bold = false,
+      undercurl = true,
+      underline = true,
+      bold = true,
       italic = {
         strings = false,
         comments = false,
@@ -786,11 +804,14 @@ LAZY_PLUGINS = {
         .    Options
         .    ^
         .    _v_ %{ve} virtual edit
-        .    _i_ %{list} invisible characters
+        .    _i_ %{ignorecase} ignorecase
+        .    _c_ %{smartcase} smartcase
+        .    _H_ %{starhashcase} star\_hash ignorecase
+        .    _I_ %{list} invisible characters
         .    _s_ %{spell} spell
         .    _S_ %{inccmd} :s preview (inccommand)
         .    _w_ %{wrap} wrap
-        .    _c_ %{cul} cursor line and column
+        .    _C_ %{cul} cursor line and column
         .    _n_ %{nu} number
         .    _r_ %{rnu} relative number
         .    _/_ %{ssl} shellslash
@@ -813,6 +834,9 @@ LAZY_PLUGINS = {
             },
             position = 'middle',
             funcs = {
+              ignorecase = function() return vim.o.ignorecase and '[x]' or '[ ]' end,
+              smartcase = function() return vim.o.smartcase and '[x]' or '[ ]' end,
+              starhashcase = function() return vim.g.star_hash_allow_ignorecase and '[x]' or '[ ]' end,
               ssl = function() return vim.o.shellslash and '[x]' or '[ ]' end,
               inccmd = function() return vim.o.inccommand == 'split' and '[x]' or '[ ]' end,
             },
@@ -824,7 +848,7 @@ LAZY_PLUGINS = {
           {
             'n',
             function()
-              if vim.o.number == true then vim.o.number = false else vim.o.number = true end
+              vim.o.number = not vim.o.number
             end,
             { desc = 'number' },
           },
@@ -848,16 +872,37 @@ LAZY_PLUGINS = {
             { desc = 'virtualedit' },
           },
           {
+            'c',
+            function()
+              vim.o.smartcase = not vim.o.smartcase
+            end,
+            { desc = 'smartcase' },
+          },
+          {
             'i',
             function()
-              if vim.o.list == true then vim.o.list = false else vim.o.list = true end
+              vim.o.ignorecase = not vim.o.ignorecase
+            end,
+            { desc = 'ignorecase' },
+          },
+          {
+            'H',
+            function()
+              vim.g.star_hash_allow_ignorecase = not vim.g.star_hash_allow_ignorecase
+            end,
+            { desc = '*/# allow_ignorecase' },
+          },
+          {
+            'I',
+            function()
+              vim.o.list = not vim.o.list
             end,
             { desc = 'show invisible' },
           },
           {
             's',
             function()
-              if vim.o.spell == true then vim.o.spell = false else vim.o.spell = true end
+              vim.o.spell = not vim.o.spell
             end,
             { exit = true, desc = 'spell' },
           },
@@ -877,12 +922,12 @@ LAZY_PLUGINS = {
           {
             'w',
             function()
-              if vim.o.wrap ~= true then vim.o.wrap = true else vim.o.wrap = false end
+              vim.o.wrap = not vim.o.wrap
             end,
             { desc = 'wrap' },
           },
           {
-            'c',
+            'C',
             function()
               if vim.o.cursorline == true then
                 vim.o.cursorline = false
