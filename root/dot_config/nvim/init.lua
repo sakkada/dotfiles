@@ -566,22 +566,23 @@ LAZY_PLUGINS = {
     event = 'VeryLazy',
     opts = {
       move_cursor = 'sticky', -- cursor "stick" to the current character
+    },
+    init = function()
       -- mini.surround like mapping avoids conficts with remote actions in flash/hope/etc.
       -- a (add) changed to f (let it be fence) for the purpose of convenience
-      keymaps = {
-        insert = ';s', --           -- default is '<c-g>s'
-        insert_line = ';S', --      -- default is '<c-g>S'
-        normal = 'sf', --           -- default is 'ys'
-        normal_line = 'sF', --      -- default is 'yS'
-        normal_cur = 'sff', --      -- default is 'yss'
-        normal_cur_line = 'sFF', -- -- default is 'ySS'
-        visual = 'S', --            -- default is 'S'
-        visual_line = 'gS', --      -- default is 'gS'
-        delete = 'sd', --           -- default is 'ds'
-        change = 'sc', --           -- default is 'cs'
-        chage_line = 'sC', --       -- default is 'cS'
-      },
-    },
+      vim.g.nvim_surround_no_normal_mappings = true
+      vim.keymap.set('i', ';s', '<Plug>(nvim-surround-insert)', { desc = 'Add a surrounding pair around the cursor (insert mode)' }) -- default is '<C-g>s'
+      vim.keymap.set('i', ';S', '<Plug>(nvim-surround-insert-line)', { desc = 'Add a surrounding pair around the cursor, on new lines (insert mode)' }) -- default is '<C-g>S'
+      vim.keymap.set('n', 'sf', '<Plug>(nvim-surround-normal)', { desc = 'Add a surrounding pair around a motion' }) -- default is 'ys'
+      vim.keymap.set('n', 'sff', '<Plug>(nvim-surround-normal-cur)', { desc = 'Add a surrounding pair around the current line' }) -- default is 'yss'
+      vim.keymap.set('n', 'sF', '<Plug>(nvim-surround-normal-line)', { desc = 'Add a surrounding pair around a motion, on new lines' }) -- default is 'yS'
+      vim.keymap.set('n', 'sFF', '<Plug>(nvim-surround-normal-cur-line)', { desc = 'Add a surrounding pair around the current line, on new lines' }) -- default is 'ySS'
+      vim.keymap.set('n', 'sd', '<Plug>(nvim-surround-delete)', { desc = 'Delete a surrounding pair' }) -- default is 'ds'
+      vim.keymap.set('n', 'sc', '<Plug>(nvim-surround-change)', { desc = 'Change a surrounding pair' }) -- default is 'cs'
+      vim.keymap.set('n', 'sC', '<Plug>(nvim-surround-change-line)', { desc = 'Change a surrounding pair, putting replacements on new lines' }) -- default is 'cS'
+      vim.keymap.set('x', 'S', '<Plug>(nvim-surround-visual)', { desc = 'Add a surrounding pair around a visual selection' }) -- default is 'S'
+      vim.keymap.set('x', 'gS', '<Plug>(nvim-surround-visual-line)', { desc = 'Add a surrounding pair around a visual selection, on new lines' }) -- default is 'gS'
+    end,
   },
   {
     'folke/flash.nvim',
