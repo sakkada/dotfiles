@@ -300,10 +300,35 @@ vim.api.nvim_create_autocmd('BufRead', {
 
 -- Highlight on yank
 local highlight_yank_group = vim.api.nvim_create_augroup('HighlightYank', { clear = true })
+
 vim.api.nvim_create_autocmd('TextYankPost', {
   group = yankgrp,
   callback = function()
     vim.hl.on_yank({ timeout = 300 })
+  end,
+})
+
+-- Restore last cursor position after text range filter processing (:{range}!{commmand})
+local restore_cursor_group = vim.api.nvim_create_augroup('RestoreCursorAfterFilter', { clear = true })
+
+vim.api.nvim_create_autocmd('CmdlineLeave', {
+  group = restore_cursor_group,
+  callback = function()
+    local cmd = vim.fn.getcmdline()
+    if cmd:find('!') and vim.split(cmd, '!')[1]:gsub('%s', ''):len() > 0 then
+      vim.b.skkd_win_view_b4_fitler = vim.fn.winsaveview()
+    end
+  end,
+})
+vim.api.nvim_create_autocmd('FilterReadPost', {
+  group = restore_cursor_group,
+  callback = function()
+    if vim.b.skkd_win_view_b4_fitler then
+      vim.schedule(function()
+        vim.fn.winrestview(vim.b.skkd_win_view_b4_fitler)
+        vim.b.skkd_win_view_b4_fitler = nil
+      end)
+    end
   end,
 })
 
