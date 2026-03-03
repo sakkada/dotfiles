@@ -604,6 +604,10 @@ fileviewer  {*.csv,*.tsv}
             \ pandoc %"c -t org,
             \ pandoc %"c -t plain,
 
+" JSON
+fileviewer  {*.json}
+            \ jq . %"c | bat --language=json --color=always --wrap=never --pager=never --line-range=:9999 --style="numbers,,changes",
+
 " EXE, DLL
 filextype   {*.exe,*.dll}
             \ {  Resouce Hacker }
