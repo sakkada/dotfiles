@@ -24,9 +24,17 @@ echo %PATH_POSTFIX% | sed -e %s/;/\n/g
 
 @echo on
 set RIPGREP_CONFIG_PATH=%USERPROFILE%/.config/ripgrep/ripgreprc
+set PYP_CONFIG_PATH=%USERPROFILE%/.config/pypyp/init.py
+set BAT_CONFIG_PATH=%USERPROFILE%/.config/bat/config
 set VIFM=%USERPROFILE%/.config/vifm
 set DOCKER_HOST=npipe:////./pipe/docker_engine
 set EDITOR=nvim
+set UV_CACHE_DIR=C:/system/platform/pythonuv/cachedir
+set UV_PYTHON_BIN_DIR=C:/system/platform/pythonuv/pybindir
+set UV_PYTHON_INSTALL_DIR=C:/system/platform/pythonuv/pydir
+set UV_TOOL_BIN_DIR=C:/system/platform/pythonuv/toolbindir
+set UV_TOOL_DIR=C:/system/platform/pythonuv/tooldir
+set UV_PREVIEW=true
 @echo off
 set PATH=%PATH_PREFIX%;%PATH%;%PATH_POSTFIX%
 
