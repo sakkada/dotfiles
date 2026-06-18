@@ -1,6 +1,6 @@
 -- Sakkada Wezterm config
 -- Source: https://wezfurlong.org/wezterm/config/files.html
-local wezterm = require("wezterm")
+local wezterm = require('wezterm')
 local config = wezterm.config_builder()
 
 -- TODO: https://github.com/wez/wezterm/discussions/628
@@ -29,71 +29,85 @@ local key_table_extend = function(table_full, table_diff)
 end
 
 local copy_mode = {
-    { key = "/", mods = "NONE", action = wezterm.action({ Search = { CaseInSensitiveString = "" } }) },
-    { key = "n", mods = "NONE", action = wezterm.action({ CopyMode = "NextMatch" }) },
-    { key = "N", mods = "SHIFT", action = wezterm.action({ CopyMode = "PriorMatch" }) },
-    { key = "S", mods = "SHIFT", action = wezterm.action.CopyMode({ SetSelectionMode = "SemanticZone" }) },
-    { key = "q", mods = "CTRL", action = wezterm.action.CopyMode({ SetSelectionMode = "Block" }) },
-    { key = "RightArrow", mods = "CTRL", action = wezterm.action({ CopyMode = "MoveForwardWordEnd" }) },
-    { key = "LeftArrow", mods = "CTRL", action = wezterm.action({ CopyMode = "MoveBackwardWord" }) },
-    { key = "Backspace", mods = "CTRL", action = wezterm.action({ CopyMode = "ClearPattern" }) }, -- Ctrl-U
-    { key = "y", mods = "CTRL", action = wezterm.action({ CopyTo = "ClipboardAndPrimarySelection" }) }, -- copy selection, stay in CopyMode
-    { key = "Y", mods = "SHIFT", action = wezterm.action(
-        act.Multiple({
-            act.CopyTo 'ClipboardAndPrimarySelection',
+    { key = '/', mods = 'NONE', action = wezterm.action({ Search = { CaseInSensitiveString = '' } }) },
+    { key = 'n', mods = 'NONE', action = wezterm.action({ CopyMode = 'NextMatch' }) },
+    { key = 'N', mods = 'SHIFT', action = wezterm.action({ CopyMode = 'PriorMatch' }) },
+    { key = 'S', mods = 'SHIFT', action = wezterm.action.CopyMode({ SetSelectionMode = 'SemanticZone' }) },
+    { key = 'q', mods = 'CTRL', action = wezterm.action.CopyMode({ SetSelectionMode = 'Block' }) },
+    { key = 'RightArrow', mods = 'CTRL', action = wezterm.action({ CopyMode = 'MoveForwardWordEnd' }) },
+    { key = 'LeftArrow', mods = 'CTRL', action = wezterm.action({ CopyMode = 'MoveBackwardWord' }) },
+    { key = 'Backspace', mods = 'CTRL', action = wezterm.action({ CopyMode = 'ClearPattern' }) }, -- Ctrl-U
+    {
+        key = 'y',
+        mods = 'CTRL',
+        action = wezterm.action({ CopyTo = 'ClipboardAndPrimarySelection' }),
+    }, -- copy selection, stay in CopyMode
+    {
+        key = 'Y',
+        mods = 'SHIFT',
+        action = wezterm.action(act.Multiple({
+            act.CopyTo('ClipboardAndPrimarySelection'),
             act.ClearSelection,
-            act.CopyMode 'ClearSelectionMode',
-        })
-    ),}, -- copy selection, clear current selection and stay in CopyMode
-    { key = "Y", mods = "CTRL|SHIFT", action = wezterm.action_callback(
-        function(window, pane)
+            act.CopyMode('ClearSelectionMode'),
+        })),
+    }, -- copy selection, clear current selection and stay in CopyMode
+    {
+        key = 'Y',
+        mods = 'CTRL|SHIFT',
+        action = wezterm.action_callback(function(window, pane)
             local ansi = window:get_selection_escapes_for_pane(pane)
             window:copy_to_clipboard(ansi)
-        end
-    ),}, -- copy selection with escape sequences (raw, as-is)
-    { key = "Enter", mods = "NONE", action = wezterm.action({ CopyMode = "PriorMatch" }) },
-    { key = "Enter", mods = "SHIFT", action = wezterm.action({ CopyMode = "NextMatch" }) },
-    { key = "Enter", mods = "CTRL", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
+        end),
+    }, -- copy selection with escape sequences (raw, as-is)
+    { key = 'Enter', mods = 'NONE', action = wezterm.action({ CopyMode = 'PriorMatch' }) },
+    { key = 'Enter', mods = 'SHIFT', action = wezterm.action({ CopyMode = 'NextMatch' }) },
+    { key = 'Enter', mods = 'CTRL', action = act.CopyMode({ SetSelectionMode = 'Cell' }) },
 }
 
 local search_mode = {
-    { key = "F", mods = "CTRL", action = "ActivateCopyMode" },
-    { key = "Enter", mods = "CTRL", action = "ActivateCopyMode" },
-    { key = "Enter", mods = "SHIFT", action = wezterm.action({ CopyMode = "NextMatch" }) },
-    { key = "Backspace", mods = "CTRL", action = wezterm.action({ CopyMode = "ClearPattern" }) }, -- Ctrl-U
+    { key = 'F', mods = 'CTRL', action = 'ActivateCopyMode' },
+    { key = 'Enter', mods = 'CTRL', action = 'ActivateCopyMode' },
+    { key = 'Enter', mods = 'SHIFT', action = wezterm.action({ CopyMode = 'NextMatch' }) },
+    { key = 'Backspace', mods = 'CTRL', action = wezterm.action({ CopyMode = 'ClearPattern' }) }, -- Ctrl-U
 }
 
-config.leader = { key = "Q", mods = "CTRL" } -- Leader is Ctrl-Shift-Q
+config.leader = { key = 'Q', mods = 'CTRL' } -- Leader is Ctrl-Shift-Q
 config.keys = {
-    { key = "UpArrow", mods = "CTRL|SHIFT", action = wezterm.action.ScrollByLine(-1) },
-    { key = "DownArrow", mods = "CTRL|SHIFT", action = wezterm.action.ScrollByLine(1) },
+    { key = 'UpArrow', mods = 'CTRL|SHIFT', action = wezterm.action.ScrollByLine(-1) },
+    { key = 'DownArrow', mods = 'CTRL|SHIFT', action = wezterm.action.ScrollByLine(1) },
     { key = 'UpArrow', mods = 'SHIFT|ALT|CTRL', action = act.ActivatePaneDirection('Up') },
     { key = 'DownArrow', mods = 'SHIFT|ALT|CTRL', action = act.ActivatePaneDirection('Down') },
-    { key = "PageUp", mods = "CTRL|SHIFT", action = wezterm.action.ScrollByPage(-1) },
-    { key = "PageDown", mods = "CTRL|SHIFT", action = wezterm.action.ScrollByPage(1) },
-    { key = "PageUp", mods = "SHIFT", action = wezterm.action.MoveTabRelative(-1) },
-    { key = "PageDown", mods = "SHIFT", action = wezterm.action.MoveTabRelative(1) },
-    { key = "J", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("open-in-nvim") },
-    { key = "M", mods = "CTRL|SHIFT", action = wezterm.action_callback(
-        function(window, pane)
+    { key = 'PageUp', mods = 'CTRL|SHIFT', action = wezterm.action.ScrollByPage(-1) },
+    { key = 'PageDown', mods = 'CTRL|SHIFT', action = wezterm.action.ScrollByPage(1) },
+    { key = 'PageUp', mods = 'SHIFT', action = wezterm.action.MoveTabRelative(-1) },
+    { key = 'PageDown', mods = 'SHIFT', action = wezterm.action.MoveTabRelative(1) },
+    { key = 'J', mods = 'CTRL|SHIFT', action = wezterm.action.EmitEvent('open-in-nvim') },
+    {
+        key = 'M',
+        mods = 'CTRL|SHIFT',
+        action = wezterm.action_callback(function(window, pane)
             window:perform_action(wezterm.action.ActivateCopyMode, pane)
-            window:perform_action(wezterm.action({ CopyMode = "ClearSelectionMode" }), pane)
-            window:perform_action(wezterm.action({ CopyMode = { SetSelectionMode = "Cell" } }), pane)
-        end
-    ),}, -- start CopyMode always with "Cell" selection mode (in any search status cases)
-    { key = "F", mods = "CTRL|SHIFT", action=wezterm.action_callback(
-        function(window, pane)
+            window:perform_action(wezterm.action({ CopyMode = 'ClearSelectionMode' }), pane)
+            window:perform_action(wezterm.action({ CopyMode = { SetSelectionMode = 'Cell' } }), pane)
+        end),
+    }, -- start CopyMode always with "Cell" selection mode (in any search status cases)
+    {
+        key = 'F',
+        mods = 'CTRL|SHIFT',
+        action = wezterm.action_callback(function(window, pane)
             local selection = window:get_selection_text_for_pane(pane)
             window:perform_action(wezterm.action({ Search = { CaseInSensitiveString = selection } }), pane)
-        end
-    )}, -- start Search with "ignore-case" (like CurrentSelectionOrEmptyString but "ignore-case")
+        end),
+    }, -- start Search with "ignore-case" (like CurrentSelectionOrEmptyString but "ignore-case")
     -- leader section
-    { key = 'q', mods = 'LEADER', action = wezterm.action.SendKey({ key = 'q', mods = 'CTRL|SHIFT' }), },
-    { key = 'F', mods = "LEADER|CTRL", action = wezterm.action.QuickSelect },
-    { key = 'f', mods = 'LEADER', action = act.QuickSelectArgs({ label = 'Select any word', patterns = { '\\w{5,}' }, }), },
-    { key = 'F', mods = 'LEADER', action = act.QuickSelectArgs({ label = 'Select any WORD', patterns = { '\\S{5,}' }, }), },
-    { key = 'Q', mods = 'LEADER|CTRL', action = wezterm.action.QuickSelectArgs(
-        {
+    { key = 'q', mods = 'LEADER', action = wezterm.action.SendKey({ key = 'q', mods = 'CTRL|SHIFT' }) },
+    { key = 'F', mods = 'LEADER|CTRL', action = wezterm.action.QuickSelect },
+    { key = 'f', mods = 'LEADER', action = act.QuickSelectArgs({ label = 'Select any word', patterns = { '\\w{5,}' } }) },
+    { key = 'F', mods = 'LEADER', action = act.QuickSelectArgs({ label = 'Select any WORD', patterns = { '\\S{5,}' } }) },
+    {
+        key = 'Q',
+        mods = 'LEADER|CTRL',
+        action = wezterm.action.QuickSelectArgs({
             label = 'Open url',
             patterns = { '(?:http|https|ftp|git|hg|tg|tonsite|skype|steam)://[a-zA-Z0-9\\p{L}:%._+~#=/?&-]+' },
             action = wezterm.action_callback(function(window, pane)
@@ -101,113 +115,117 @@ config.keys = {
                 wezterm.log_info('opening: ' .. url)
                 wezterm.open_with(url)
             end),
-        }
-    )}, -- start QuickSelect with open url in browser action
-    { key = "W", mods = "LEADER|CTRL", action = wezterm.action.ActivateKeyTable(
-        { name = "resize_mode", one_shot = false, prevent_fallback = true }
-    )},
-    { key = '|', mods = "LEADER|SHIFT", action = act.SplitHorizontal{ domain =  'CurrentPaneDomain' } },
-    { key = '-', mods = "LEADER", action = act.SplitVertical{ domain =  'CurrentPaneDomain' } },
+        }),
+    }, -- start QuickSelect with open url in browser action
+    {
+        key = 'W',
+        mods = 'LEADER|CTRL',
+        action = wezterm.action.ActivateKeyTable({ name = 'resize_mode', one_shot = false, prevent_fallback = true }),
+    },
+    { key = '|', mods = 'LEADER|SHIFT', action = act.SplitHorizontal({ domain = 'CurrentPaneDomain' }) },
+    { key = '-', mods = 'LEADER', action = act.SplitVertical({ domain = 'CurrentPaneDomain' }) },
     -- disable section
     -- disable all possible CTRL-SHIFT-# / SUPER-# tab activation hotkeys
-    { key = "!", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "!", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-    { key = "1", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "1", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
-    { key = "@", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "@", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-    { key = "2", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "2", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
-    { key = "#", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "#", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-    { key = "3", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "3", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
-    { key = "$", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "$", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-    { key = "4", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "4", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
-    { key = "%", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "%", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-    { key = "5", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "5", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
-    { key = "^", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "^", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-    { key = "6", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "6", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
-    { key = "&", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "&", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-    { key = "7", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "7", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
-    { key = "*", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "*", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-    { key = "8", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "8", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
-    { key = "(", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "(", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-    { key = "9", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
-    { key = "9", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
+    { key = '!', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '!', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '1', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '1', mods = 'SUPER', action = wezterm.action.DisableDefaultAssignment },
+    { key = '@', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '@', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '2', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '2', mods = 'SUPER', action = wezterm.action.DisableDefaultAssignment },
+    { key = '#', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '#', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '3', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '3', mods = 'SUPER', action = wezterm.action.DisableDefaultAssignment },
+    { key = '$', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '$', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '4', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '4', mods = 'SUPER', action = wezterm.action.DisableDefaultAssignment },
+    { key = '%', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '%', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '5', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '5', mods = 'SUPER', action = wezterm.action.DisableDefaultAssignment },
+    { key = '^', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '^', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '6', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '6', mods = 'SUPER', action = wezterm.action.DisableDefaultAssignment },
+    { key = '&', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '&', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '7', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '7', mods = 'SUPER', action = wezterm.action.DisableDefaultAssignment },
+    { key = '*', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '*', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '8', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '8', mods = 'SUPER', action = wezterm.action.DisableDefaultAssignment },
+    { key = '(', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '(', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '9', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = '9', mods = 'SUPER', action = wezterm.action.DisableDefaultAssignment },
     -- disable splitter keybindings
-    { key = '\"', mods = 'ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
-    { key = '\"', mods = 'SHIFT|ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
-    { key = '\'', mods = 'SHIFT|ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '"', mods = 'ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = '"', mods = 'SHIFT|ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
+    { key = "'", mods = 'SHIFT|ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
     { key = '%', mods = 'ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
     { key = '%', mods = 'SHIFT|ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
     { key = '5', mods = 'SHIFT|ALT|CTRL', action = wezterm.action.DisableDefaultAssignment },
-    { key = 'Space', mods = 'CTRL', action = wezterm.action_callback(
-        function(window, pane)
+    {
+        key = 'Space',
+        mods = 'CTRL',
+        action = wezterm.action_callback(function(window, pane)
             -- Improved keyboard handling in Conpty (Windows Pseudo Console)
             -- https://github.com/microsoft/terminal/blob/main/doc/specs/%234999%20-%20Improved%20keyboard%20handling%20in%20Conpty.md
 
             -- Note: to get SCO sequence, set debug_key_events to true, run wezterm from cli,
             -- press desired sequence (e.g. ctrl-space) and watch log messages, extract from
             -- > win32: Encoded input as "{sequence-item-here}", replace "\u{1b}" with "\27".
-            local c_space_sco ="\27[17;29;0;1;8;1_\27[32;57;32;1;8;1_\27[32;57;32;0;8;1_\27[17;29;0;0;0;1_"
+            local c_space_sco = '\27[17;29;0;1;8;1_\27[32;57;32;1;8;1_\27[32;57;32;0;8;1_\27[17;29;0;0;0;1_'
 
             -- User variable is set in Neovim, like smart-split.nvim plugin do.
             -- https://wezterm.org/config/lua/pane/get_user_vars.html
-            local is_nvim = pane:get_user_vars().IS_NVIM == "true"
+            local is_nvim = pane:get_user_vars().IS_NVIM == 'true'
 
             local is_windows = string.find(wezterm.target_triple, 'windows') ~= nil
             local action = nil
 
             if is_nvim or not is_windows then
-              action = wezterm.action.SendKey({ key = 'Space', mods = 'CTRL' })
+                action = wezterm.action.SendKey({ key = 'Space', mods = 'CTRL' })
             else
-              action = wezterm.action.SendString( c_space_sco )
+                action = wezterm.action.SendString(c_space_sco)
             end
             window:perform_action(action, pane)
-        end
-    )},
+        end),
+    },
 }
 
 config.key_tables = {
     resize_mode = {
-        { key = "LeftArrow", action = act.AdjustPaneSize({ "Left", 1 }) },
-        { key = "RightArrow", action = act.AdjustPaneSize({ "Right", 1 }) },
-        { key = "UpArrow", action = act.AdjustPaneSize({ "Up", 1 }) },
-        { key = "DownArrow", action = act.AdjustPaneSize({ "Down", 1 }) },
-        { key = "LeftArrow", mods = "CTRL", action = act.AdjustPaneSize({ "Left", 5 }) },
-        { key = "RightArrow", mods = "CTRL", action = act.AdjustPaneSize({ "Right", 5 }) },
-        { key = "UpArrow", mods = "CTRL", action = act.AdjustPaneSize({ "Up", 3 }) },
-        { key = "DownArrow", mods = "CTRL", action = act.AdjustPaneSize({ "Down", 3 }) },
+        { key = 'LeftArrow', action = act.AdjustPaneSize({ 'Left', 1 }) },
+        { key = 'RightArrow', action = act.AdjustPaneSize({ 'Right', 1 }) },
+        { key = 'UpArrow', action = act.AdjustPaneSize({ 'Up', 1 }) },
+        { key = 'DownArrow', action = act.AdjustPaneSize({ 'Down', 1 }) },
+        { key = 'LeftArrow', mods = 'CTRL', action = act.AdjustPaneSize({ 'Left', 5 }) },
+        { key = 'RightArrow', mods = 'CTRL', action = act.AdjustPaneSize({ 'Right', 5 }) },
+        { key = 'UpArrow', mods = 'CTRL', action = act.AdjustPaneSize({ 'Up', 3 }) },
+        { key = 'DownArrow', mods = 'CTRL', action = act.AdjustPaneSize({ 'Down', 3 }) },
         { key = 'LeftArrow', mods = 'SHIFT|CTRL', action = act.ActivatePaneDirection('Left') },
         { key = 'RightArrow', mods = 'SHIFT|CTRL', action = act.ActivatePaneDirection('Right') },
         { key = 'UpArrow', mods = 'SHIFT|CTRL', action = act.ActivatePaneDirection('Up') },
         { key = 'DownArrow', mods = 'SHIFT|CTRL', action = act.ActivatePaneDirection('Down') },
-        { key = "h", action = act.AdjustPaneSize({ "Left", 1 }) },
-        { key = "l", action = act.AdjustPaneSize({ "Right", 1 }) },
-        { key = "k", action = act.AdjustPaneSize({ "Up", 1 }) },
-        { key = "j", action = act.AdjustPaneSize({ "Down", 1 }) },
-        { key = "h", mods = "CTRL", action = act.AdjustPaneSize({ "Left", 10 }) },
-        { key = "l", mods = "CTRL", action = act.AdjustPaneSize({ "Right", 10 }) },
-        { key = "k", mods = "CTRL", action = act.AdjustPaneSize({ "Up", 10 }) },
-        { key = "j", mods = "CTRL", action = act.AdjustPaneSize({ "Down", 10 }) },
-        { key = "H", mods = "CTRL", action = act.AdjustPaneSize({ "Left", 5 }) },
-        { key = "L", mods = "CTRL", action = act.AdjustPaneSize({ "Right", 5 }) },
-        { key = "K", mods = "CTRL", action = act.AdjustPaneSize({ "Up", 5 }) },
-        { key = "J", mods = "CTRL", action = act.AdjustPaneSize({ "Down", 5 }) },
-        { key = "W", mods = "CTRL", action = "PopKeyTable" },
-        { key = "Escape", action = "PopKeyTable" },
+        { key = 'h', action = act.AdjustPaneSize({ 'Left', 1 }) },
+        { key = 'l', action = act.AdjustPaneSize({ 'Right', 1 }) },
+        { key = 'k', action = act.AdjustPaneSize({ 'Up', 1 }) },
+        { key = 'j', action = act.AdjustPaneSize({ 'Down', 1 }) },
+        { key = 'h', mods = 'CTRL', action = act.AdjustPaneSize({ 'Left', 10 }) },
+        { key = 'l', mods = 'CTRL', action = act.AdjustPaneSize({ 'Right', 10 }) },
+        { key = 'k', mods = 'CTRL', action = act.AdjustPaneSize({ 'Up', 10 }) },
+        { key = 'j', mods = 'CTRL', action = act.AdjustPaneSize({ 'Down', 10 }) },
+        { key = 'H', mods = 'CTRL', action = act.AdjustPaneSize({ 'Left', 5 }) },
+        { key = 'L', mods = 'CTRL', action = act.AdjustPaneSize({ 'Right', 5 }) },
+        { key = 'K', mods = 'CTRL', action = act.AdjustPaneSize({ 'Up', 5 }) },
+        { key = 'J', mods = 'CTRL', action = act.AdjustPaneSize({ 'Down', 5 }) },
+        { key = 'W', mods = 'CTRL', action = 'PopKeyTable' },
+        { key = 'Escape', action = 'PopKeyTable' },
     }, -- custom key-table (very similar to neovim hydra functionality)
     copy_mode = key_table_extend(wezterm.gui.default_key_tables().copy_mode, copy_mode),
     search_mode = key_table_extend(wezterm.gui.default_key_tables().search_mode, search_mode),
@@ -242,12 +260,12 @@ config.colors = {
     -- foreground = 'silver',
     -- The default background color
     -- background = 'black',
-    background = "#112222",
+    background = '#112222',
 
     -- Overrides the cell background color when the current cell is occupied by the
     -- cursor and the cursor style is set to Block
     -- cursor_bg = '#52ad70',
-    cursor_bg = "#ffffff",
+    cursor_bg = '#ffffff',
     -- Overrides the text color when the current cell is occupied by the cursor
     -- cursor_fg = 'black',
     -- Specifies the border color of the cursor when the cursor style is set to Block,
@@ -266,11 +284,11 @@ config.colors = {
     -- scrollbar_thumb = 'Orange',
     -- scrollbar_thumb = '#ffa500',
     -- scrollbar_thumb = '#333333',
-    scrollbar_thumb = "#8e4009",
-    scrollbar_thumb = "#a06000",
+    scrollbar_thumb = '#8e4009',
+    scrollbar_thumb = '#a06000',
 
     -- The color of the split lines between panes
-    split = "#8e4009",
+    split = '#8e4009',
 
     -- ansi =    { 'black', 'maroon', 'green', 'olive',  'navy', 'purple',  'teal', 'silver', },
     -- brights = { 'grey',  'red',    'lime',  'yellow', 'blue', 'fuchsia', 'aqua', 'white', },
@@ -312,34 +330,34 @@ config.colors = {
 
         -- The active tab is the one that has focus in the window
         active_tab = {
-            bg_color = "#112222",
-            fg_color = "#aaaaaa",
+            bg_color = '#112222',
+            fg_color = '#aaaaaa',
         },
 
         -- Inactive tabs are the tabs that do not have focus
         inactive_tab = {
-            bg_color = "#333333",
-            fg_color = "#808080",
+            bg_color = '#333333',
+            fg_color = '#808080',
         },
 
         -- You can configure some alternate styling when the mouse pointer
         -- moves over inactive tabs
         inactive_tab_hover = {
-            bg_color = "#112f2f",
-            fg_color = "#808080",
+            bg_color = '#112f2f',
+            fg_color = '#808080',
         },
 
         -- The new tab button that let you create new tabs
         new_tab = {
-            bg_color = "#333333",
-            fg_color = "Orange",
+            bg_color = '#333333',
+            fg_color = 'Orange',
         },
 
         -- You can configure some alternate styling when the mouse pointer
         -- moves over the new tab button
         new_tab_hover = {
-            bg_color = "#333333",
-            fg_color = "#ffff00",
+            bg_color = '#333333',
+            fg_color = '#ffff00',
         },
     },
 }
@@ -349,11 +367,11 @@ config.enable_scroll_bar = true
 
 -- For example, changing the color scheme:
 config.max_fps = 120
-config.color_scheme = "AdventureTime"
-config.color_scheme = "Gruvbox Material (Gogh)"
-config.color_scheme = "Tango (base16)"
-config.color_scheme = "Tango (terminal.sexy)"
-config.color_scheme = "Tartan (terminal.sexy)"
+config.color_scheme = 'AdventureTime'
+config.color_scheme = 'Gruvbox Material (Gogh)'
+config.color_scheme = 'Tango (base16)'
+config.color_scheme = 'Tango (terminal.sexy)'
+config.color_scheme = 'Tartan (terminal.sexy)'
 config.command_palette_font_size = 11.0
 config.font_size = 10
 -- config.font_rules = {
@@ -367,7 +385,7 @@ config.font_size = 10
 --   },
 -- }
 -- config.font_shaper = 'Allsorts'
-config.font_shaper = "Harfbuzz"
+config.font_shaper = 'Harfbuzz'
 -- config.font = wezterm.font(
 --     "Consolas NF",
 --     -- 'FiraCode Nerd Font Mono Ret',
@@ -386,15 +404,15 @@ config.font = wezterm.font_with_fallback({
 
 -- config.front_end = "OpenGL"
 -- config.front_end = "Software"
-config.front_end = "WebGpu"
+config.front_end = 'WebGpu'
 -- config.webgpu_power_preference = "HighPerformance"
 
-config.window_decorations = "INTEGRATED_BUTTONS | RESIZE"
-config.window_decorations = "TITLE | RESIZE | MACOS_FORCE_DISABLE_SHADOW | INTEGRATED_BUTTONS"
+config.window_decorations = 'INTEGRATED_BUTTONS | RESIZE'
+config.window_decorations = 'TITLE | RESIZE | MACOS_FORCE_DISABLE_SHADOW | INTEGRATED_BUTTONS'
 config.integrated_title_buttons = { 'Hide', 'Maximize', 'Close' }
-config.integrated_title_button_color = "Orange"
-config.integrated_title_button_style = "Windows" -- Windows|Gnome|MacOsNative
-config.integrated_title_button_alignment = "Right"
+config.integrated_title_button_color = 'Orange'
+config.integrated_title_button_style = 'Windows' -- Windows|Gnome|MacOsNative
+config.integrated_title_button_alignment = 'Right'
 config.window_frame = {
     -- inactive_titlebar_bg = '#353535',
     -- active_titlebar_bg = '#2b2042',
@@ -436,13 +454,13 @@ config.window_frame = {
     font_size = 10.0,
 }
 
-config.default_cursor_style = "BlinkingUnderline" -- "BlinkingBar"
-config.underline_thickness = "1px"
+config.default_cursor_style = 'BlinkingUnderline' -- "BlinkingBar"
+config.underline_thickness = '1px'
 config.animation_fps = 60
 config.cursor_blink_rate = 250
-config.cursor_thickness = "2px"
-config.cursor_blink_ease_in = "Linear"
-config.cursor_blink_ease_out = "Linear"
+config.cursor_thickness = '2px'
+config.cursor_blink_ease_in = 'Linear'
+config.cursor_blink_ease_out = 'Linear'
 -- config.force_reverse_video_cursor = true
 
 config.use_fancy_tab_bar = true
@@ -488,7 +506,7 @@ config.window_padding = {
 config.anti_alias_custom_block_glyphs = true
 config.status_update_interval = 500
 
-config.allow_win32_input_mode = true  -- default true, set to false to allow <ctrl+space> and similar key sequences
+config.allow_win32_input_mode = true -- default true, set to false to allow <ctrl+space> and similar key sequences
 
 -- Wezterm events handling
 -- -----------------------
@@ -496,14 +514,14 @@ config.allow_win32_input_mode = true  -- default true, set to false to allow <ct
 
 -- custom event, open current pane history in newtab neovim
 -- https://wezfurlong.org/wezterm/config/lua/wezterm/on.html#custom-events
-wezterm.on("open-in-nvim", function(window, pane)
-    local file = io.open("c:/sakkada/temp/wezterm_buf.txt", "w")
+wezterm.on('open-in-nvim', function(window, pane)
+    local file = io.open('c:/sakkada/temp/wezterm_buf.txt', 'w')
     file:write(pane:get_lines_as_text(3000))
     file:close()
     window:perform_action(
         wezterm.action({
             SpawnCommandInNewTab = {
-                args = { "nvim", "c:/sakkada/temp/wezterm_buf.txt", "-c", "call cursor(3000,0)" } 
+                args = { 'nvim', 'c:/sakkada/temp/wezterm_buf.txt', '-c', 'call cursor(3000,0)' },
             },
         }),
         pane
@@ -512,12 +530,12 @@ end)
 
 -- show title of current key table (mode) in right status area
 -- https://wezfurlong.org/wezterm/config/lua/window-events/update-right-status.html
-wezterm.on("update-right-status", function(window, pane)
+wezterm.on('update-right-status', function(window, pane)
     local name = window:active_key_table()
     if name then
-        name = "KeyTable: " .. name
+        name = 'KeyTable: ' .. name
     end
-    window:set_right_status(name or "")
+    window:set_right_status(name or '')
 
     -- -- overrides opacity if any key table is enabled
     -- -- disabled cause set_config_overrides makes with ~1 second lag
@@ -554,9 +572,9 @@ end)
 
 -- colorize tab title with unseen output
 -- https://wezfurlong.org/wezterm/config/lua/window-events/format-tab-title.html
-wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
+wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
     -- get tab title with tab index to imitate default behaviour
-    local tab_title = tostring(tab.tab_index + 1) .. ": " .. tab.active_pane.title
+    local tab_title = tostring(tab.tab_index + 1) .. ': ' .. tab.active_pane.title
 
     -- active tab
     if tab.is_active then
@@ -579,9 +597,9 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
             -- { Background = { Color = "#1C2235" } },
             -- { Background = { Color = "#141D38" } },
             -- { Background = { Color = "#3F250A" } },
-            { Background = { Color = "#332022" } },
+            { Background = { Color = '#332022' } },
             -- { Foreground = { Color = "#cccccc" } },
-            { Foreground = { Color = "#999999" } },
+            { Foreground = { Color = '#999999' } },
             { Text = tab_title },
         }
     end
