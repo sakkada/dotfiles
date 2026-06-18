@@ -37,7 +37,7 @@ local copy_mode = {
     { key = "RightArrow", mods = "CTRL", action = wezterm.action({ CopyMode = "MoveForwardWordEnd" }) },
     { key = "LeftArrow", mods = "CTRL", action = wezterm.action({ CopyMode = "MoveBackwardWord" }) },
     { key = "Backspace", mods = "CTRL", action = wezterm.action({ CopyMode = "ClearPattern" }) }, -- Ctrl-U
-    { key = "y", mods = "SHIFT", action = wezterm.action({ CopyTo = "ClipboardAndPrimarySelection" }) },
+    { key = "y", mods = "CTRL", action = wezterm.action({ CopyTo = "ClipboardAndPrimarySelection" }) }, -- copy selection, stay in CopyMode
     { key = "Y", mods = "SHIFT", action = wezterm.action(
         act.Multiple({
             act.CopyTo 'ClipboardAndPrimarySelection',
@@ -57,7 +57,7 @@ local copy_mode = {
 }
 
 local search_mode = {
-    { key = "RightArrow", mods = "NONE", action = "ActivateCopyMode" },
+    { key = "F", mods = "CTRL", action = "ActivateCopyMode" },
     { key = "Enter", mods = "CTRL", action = "ActivateCopyMode" },
     { key = "Enter", mods = "SHIFT", action = wezterm.action({ CopyMode = "NextMatch" }) },
     { key = "Backspace", mods = "CTRL", action = wezterm.action({ CopyMode = "ClearPattern" }) }, -- Ctrl-U
@@ -90,10 +90,12 @@ config.keys = {
     -- leader section
     { key = 'q', mods = 'LEADER', action = wezterm.action.SendKey({ key = 'q', mods = 'CTRL|SHIFT' }), },
     { key = 'F', mods = "LEADER|CTRL", action = wezterm.action.QuickSelect },
+    { key = 'f', mods = 'LEADER', action = act.QuickSelectArgs({ label = 'Select any word', patterns = { '\\w{5,}' }, }), },
+    { key = 'F', mods = 'LEADER', action = act.QuickSelectArgs({ label = 'Select any WORD', patterns = { '\\S{5,}' }, }), },
     { key = 'Q', mods = 'LEADER|CTRL', action = wezterm.action.QuickSelectArgs(
         {
             label = 'Open url',
-            patterns = { '(?:http|https|ftp|git|hg|tg|tonsite|skype)://\\S+' },
+            patterns = { '(?:http|https|ftp|git|hg|tg|tonsite|skype|steam)://[a-zA-Z0-9\\p{L}:%._+~#=/?&-]+' },
             action = wezterm.action_callback(function(window, pane)
                 local url = window:get_selection_text_for_pane(pane)
                 wezterm.log_info('opening: ' .. url)
