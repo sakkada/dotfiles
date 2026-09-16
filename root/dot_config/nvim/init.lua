@@ -20,7 +20,9 @@ vim.o.compatible = false -- Neovim is always nocompatible
 vim.o.termguicolors = true -- Enables 24-bit RGB color in the TUI
 vim.o.guifont = 'Consolas NF:h10' -- Font in GUI mode, e.g. in Neovide
 vim.g.neovide_cursor_vfx_mode = 'railgun'
-vim.o.shellslash = false -- Windows only: use forward slashes in paths if set
+if vim.fn.has("win32") == 1 then
+    vim.o.shellslash = true -- Windows only: use forward slashes in paths if set
+end
 vim.opt.path:append({ '**' }) -- Search current directory recursively (see :help file-searching)
 
 vim.o.number = true -- Show numbers
@@ -544,7 +546,9 @@ LAZY_PLUGINS = {
     init = function()
       vim.g.vifm_replace_netrw = 1
       vim.g.vifm_embed_split = false
-      vim.env.LINES = vim.env.LINES - 2
+      if not vim.env.lines == nil then
+        vim.env.lines = vim.env.lines - 3 -- Found experimentally (2 fails with multiple tabs)
+      end
 
       -- Vifm (set not in lazy keys due to error in vifm.vim plugin: drop on line 33 raises E565)
       vim.keymap.set('n', '<leader>vv', ':Vifm<cr>', { desc = 'Open Vifm in current file realted directory' })
