@@ -126,6 +126,7 @@ config.keys = {
     { key = '-', mods = 'LEADER', action = act.SplitVertical({ domain = 'CurrentPaneDomain' }) },
     -- disable section
     -- disable all possible CTRL-SHIFT-# / SUPER-# tab activation hotkeys
+    { key = 'Q', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
     { key = '!', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
     { key = '!', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
     { key = '1', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
