@@ -14,6 +14,30 @@ if not wezterm.gui then
     return config
 end
 
+-- OS specific configuration
+local is_windows = wezterm.target_triple:find('windows') ~= nil
+local is_macos = wezterm.target_triple:find('apple') ~= nil
+local is_linux = wezterm.target_triple:find('linux') ~= nil
+
+local font_size = {
+    main = 12,
+    command_palette = 12,
+    window_frame = 12,
+}
+if is_macos then
+    font_size.main = 14
+    font_size.command_palette = 14
+    font_size.window_frame = 13
+elseif is_windows then
+    font_size.main = 10
+    font_size.command_palette = 11
+    font_size.window_frame = 10
+elseif is_linux then
+    font_size.main = 12
+    font_size.command_palette = 12
+    font_size.window_frame = 12
+end
+
 -- Key bindings and Key tables
 -- ---------------------------
 -- Help: https://wezfurlong.org/wezterm/config/default-keys.html
@@ -126,7 +150,7 @@ config.keys = {
     { key = '-', mods = 'LEADER', action = act.SplitVertical({ domain = 'CurrentPaneDomain' }) },
     -- disable section
     -- disable all possible CTRL-SHIFT-# / SUPER-# tab activation hotkeys
-    { key = 'Q', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
+    { key = 'Q', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment }, -- MacOS specific
     { key = '!', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
     { key = '!', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment },
     { key = '1', mods = 'CTRL|SHIFT', action = wezterm.action.DisableDefaultAssignment },
@@ -186,9 +210,7 @@ config.keys = {
             -- https://wezterm.org/config/lua/pane/get_user_vars.html
             local is_nvim = pane:get_user_vars().IS_NVIM == 'true'
 
-            local is_windows = string.find(wezterm.target_triple, 'windows') ~= nil
             local action = nil
-
             if is_nvim or not is_windows then
                 action = wezterm.action.SendKey({ key = 'Space', mods = 'CTRL' })
             else
@@ -373,8 +395,8 @@ config.color_scheme = 'Gruvbox Material (Gogh)'
 config.color_scheme = 'Tango (base16)'
 config.color_scheme = 'Tango (terminal.sexy)'
 config.color_scheme = 'Tartan (terminal.sexy)'
-config.command_palette_font_size = 11.0
-config.font_size = 10
+config.command_palette_font_size = font_size.command_palette
+config.font_size = font_size.main
 -- config.font_rules = {
 --   {
 --     intensity = 'Bold',
@@ -400,6 +422,7 @@ config.font_shaper = 'Harfbuzz'
 -- )
 config.font = wezterm.font_with_fallback({
     { family = 'Consolas', weight = 'Regular' },
+    { family = 'JetBrains Mono', weight = 'Regular' },
     'Symbol Nerd Fort Mono',
 })
 
@@ -447,12 +470,13 @@ config.window_frame = {
     -- font = wezterm.font({ family = "Consolas", weight = "Regular" }),
     font = wezterm.font_with_fallback({
         { family = 'Consolas', weight = 'Regular' },
+        { family = 'JetBrains Mono', weight = 'Regular' },
         'Symbol Nerd Fort',
     }),
 
     -- The size of the font in the tab bar.
     -- Default to 10.0 on Windows but 12.0 on other systems
-    font_size = 10.0,
+    font_size = font_size.window_frame,
 }
 
 config.default_cursor_style = 'BlinkingUnderline' -- "BlinkingBar"
